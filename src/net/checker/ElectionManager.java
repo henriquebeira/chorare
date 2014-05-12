@@ -5,11 +5,7 @@
  */
 package net.checker;
 
-import chorare_pacote.RecebeMulticast;
-import chorare_pacote.TCP_Client_Busca;
-import chorare_pacote.TCP_Envia_Lista;
 import chorare_pacote.TCP_Recebe_Lista;
-import chorare_pacote.TCP_Server_Busca;
 import chorare_pacote.Voto;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -18,8 +14,6 @@ import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -29,8 +23,9 @@ public class ElectionManager extends Thread {
 
     private final ArrayList<Voto> votacao;
     private StatusChecker checker;
-
+    private int numeroPortaPasta;
     private Long startTime;
+    private String caminhoDoDiretorio;
 
     public ElectionManager(StatusChecker check) {
         this.votacao = new ArrayList<>();
@@ -94,8 +89,8 @@ public class ElectionManager extends Thread {
             // Prepara o vencedor para receber lista de outros peers
             if (vencedor.getPorta() == numeroPortaPasta) { // Se este processo for o vencedor
                 // Inicializa o tracker
-                Thread thread_recebe_lista = new Thread(new TCP_Recebe_Lista(caminhoDoDiretorio, numeroPortaPasta));
-                thread_recebe_lista.start();
+                //Thread thread_recebe_lista = new Thread(new TCP_Recebe_Lista(caminhoDoDiretorio, numeroPortaPasta));
+                //thread_recebe_lista.start();
             }
 
             //Inicializa o Client

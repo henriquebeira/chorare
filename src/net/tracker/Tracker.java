@@ -6,7 +6,6 @@
 
 package net.tracker;
 
-import chorare_pacote.GeradorAssinatura;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -19,6 +18,8 @@ import java.net.Socket;
  */
 public class Tracker extends Thread{
     private final GeradorAssinatura gerarParChaves;
+    int numeroPortaPasta;
+    String caminhoDaPasta;
     
     /**
      * Construtora da classe. Geração do par de chaves privada e pública.
