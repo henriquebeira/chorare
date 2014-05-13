@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package net.tracker;
 
 import java.io.File;
@@ -12,33 +11,45 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
- * Classe que o Tracker usa para iniciar a conexão que receberá as requisições de busca dos peers.
- * 
+ * Classe que o Tracker usa para iniciar a conexão que receberá as requisições
+ * de busca dos peers.
+ *
  * @author Henriques
  */
-public class Tracker extends Thread{
+public class Tracker extends Thread {
+
     private final GeradorAssinatura gerarParChaves;
     int numeroPortaPasta;
     String caminhoDaPasta;
-    
+
+    private final TrackerStillAlive stillAlive;
+    private final TrackerListReceiver receiveList;
+
     /**
      * Construtora da classe. Geração do par de chaves privada e pública.
-     * 
+     *
      * @param caminhoDaPasta
-     * @param porta 
+     * @param porta
      */
     Tracker() {
-        gerarParChaves = new GeradorAssinatura(caminhoDaPasta+File.separator+numeroPortaPasta);
+        gerarParChaves = new GeradorAssinatura(caminhoDaPasta + File.separator + numeroPortaPasta);
+        
+        stillAlive = new TrackerStillAlive();
+        stillAlive.start();
+        
+        receiveList = new TrackerListReceiver(caminhoDaPasta, MIN_PRIORITY);
+        receiveList.start();
     }
-    
+
     /**
-     * Porta final 2 do Tracker é utilizada para receber requisições de buscas no tracker, e.g. 8012 (quando peer vencedor for 8010).
-     * 
+     * Porta final 2 do Tracker é utilizada para receber requisições de buscas
+     * no tracker, e.g. 8012 (quando peer vencedor for 8010).
+     *
      */
     @Override
     public void run() {
         try {
-            int serverPort = numeroPortaPasta+2; 
+            int serverPort = numeroPortaPasta + 2;
             ServerSocket listenSocket = new ServerSocket(serverPort);
             gerarParChaves.gerar();
             while (true) {
@@ -46,7 +57,13 @@ public class Tracker extends Thread{
                 SearchRequest c = new SearchRequest(clientSocket, caminhoDaPasta, Integer.toString(numeroPortaPasta));
             }
         } catch (IOException e) {
-            System.out.println("Listen socket TCP_Server_Busca:" + e.getMessage());
         }
+
+        kill();
+    }
+
+    private void kill() {
+        stillAlive.setHasToDie(true);
+        receiveList.setHasToDie(true);
     }
 }

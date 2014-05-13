@@ -5,7 +5,6 @@
  */
 package net.checker;
 
-import chorare_pacote.TCP_Recebe_Lista;
 import chorare_pacote.Voto;
 import java.io.IOException;
 import java.net.DatagramPacket;
