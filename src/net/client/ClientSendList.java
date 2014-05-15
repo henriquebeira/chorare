@@ -8,8 +8,10 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import net.start.Main;
 
 /**
  * Classe para envio dos arquivos que possui para o Tracker.
@@ -19,8 +21,12 @@ import java.net.UnknownHostException;
  */
 class ClientSendList extends Thread{
     
-    private final int portaVencedora, numeroDesteProcesso;
-    private final String caminhoDoDiretorio;
+//    private final int portaVencedora, numeroDesteProcesso;
+//    private final String caminhoDoDiretorio;
+    
+    private Main main;
+    private InetAddress receiveAddress;
+    private int receivePort;
 
     /**
      * Construtora da classe.
@@ -29,10 +35,10 @@ class ClientSendList extends Thread{
      * @param portaVencedora Porta do Processo que atua como Tracker.
      * @param estaPorta Identificação do Processo.
      */
-    public ClientSendList(String caminhoDaPasta, int portaVencedora, int estaPorta) {
-        this.caminhoDoDiretorio = caminhoDaPasta;
-        this.portaVencedora = portaVencedora;
-        this.numeroDesteProcesso = estaPorta;
+    public ClientSendList(Main main, InetAddress receiveAddress, int receivePort) {
+        this.main = main;
+        this.receiveAddress = receiveAddress;
+        this.receivePort = receivePort;
     }
 
     /**
@@ -43,23 +49,23 @@ class ClientSendList extends Thread{
     public void run() {
         Socket socket = null;
         try {
-            int portaTracker = portaVencedora;
-            socket = new Socket("localhost", portaTracker);
+//            int portaTracker = portaVencedora;
+            socket = new Socket(main.getTrackerAddress(), main.getTrackerPort());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             
-            if (!new File(caminhoDoDiretorio+ numeroDesteProcesso).exists()) { // Verifica se o diretório existe.   
-                (new File(caminhoDoDiretorio+ numeroDesteProcesso)).mkdirs();   // Cria o diretório   
+            if (!new File(main.getDefaultDiretory().getPath() + File.separator + main.getNickName()).exists()) { // Verifica se o diretório existe.   
+                (new File(main.getDefaultDiretory().getPath() + File.separator + main.getNickName())).mkdirs();   // Cria o diretório   
             }
             
-            if (!new File(caminhoDoDiretorio+ numeroDesteProcesso + File.separator + "controle").exists()) { // Verifica se o diretório existe.   
-                (new File(caminhoDoDiretorio+ numeroDesteProcesso + File.separator + "controle")).mkdir();   // Cria o diretório   
+            if (!new File(main.getDefaultDiretory().getPath() + File.separator + main.getNickName() + File.separator + "controle").exists()) { // Verifica se o diretório existe.   
+                (new File(main.getDefaultDiretory().getPath() + File.separator + main.getNickName() + File.separator + "controle")).mkdir();   // Cria o diretório   
             }
 
-            for (File file : new File(caminhoDoDiretorio+ numeroDesteProcesso).listFiles()) {
+            for (File file : new File(main.getDefaultDiretory().getPath() + File.separator + main.getNickName()).listFiles()) {
                 if(!file.getName().equals("controle")) // Ignora o diretório denominado "controle"
                 {
-                    out.writeUTF(numeroDesteProcesso + ";" + file.getName() + ";");
-                    System.out.println(numeroDesteProcesso + " respondeu que tem os arquivos: " + file.getName());
+                    out.writeUTF(receiveAddress.getHostAddress() + ";" + receivePort + ";" + file.getName() + ";");
+//                    System.out.println(numeroDesteProcesso + " respondeu que tem os arquivos: " + file.getName());
                 }
             }
             out.close();

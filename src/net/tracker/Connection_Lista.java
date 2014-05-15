@@ -32,7 +32,7 @@ class Connection_Lista extends Thread {
      * @param caminho Caminho raíz, já com a identificação do Tracker.
      * @param fos Fluxo para a construção do arquivo lista.txt.
      */
-    public Connection_Lista(int porta, Socket aClientSocket, String caminho, FileOutputStream fos) {
+    public Connection_Lista(Socket aClientSocket, String caminho, FileOutputStream fos) {
         try {
             this.fos = fos;
             clientSocket = aClientSocket;
@@ -53,7 +53,7 @@ class Connection_Lista extends Thread {
             while (!this.isInterrupted()) {
                 String identificacaoArquivo = in.readUTF();
                 System.out.println("Connection_Lista recebeu: " + identificacaoArquivo);
-                fos = new FileOutputStream(caminhoCompletoDoDiretorio + File.separator + "controle" + File.separator + "lista.txt", true);
+                fos = new FileOutputStream(caminhoCompletoDoDiretorio + File.separator + "controle" + File.separator + "track" + File.separator + "lista.txt", true);
                 fos.write((identificacaoArquivo + "\n").getBytes());
             }
             in.close();

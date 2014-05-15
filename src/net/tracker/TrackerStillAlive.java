@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -19,6 +17,13 @@ import java.util.logging.Logger;
 public class TrackerStillAlive extends Thread {
     private boolean hasToDie = false;
     
+    private InetAddress adrress;
+    private int port;
+
+    public TrackerStillAlive(InetAddress adrress, int port) {
+        this.adrress = adrress;
+        this.port = port;
+    }
 
     @Override
     public void run() {
@@ -28,7 +33,7 @@ public class TrackerStillAlive extends Thread {
             
             socket.joinGroup(group);
 
-            byte[] message = "Tracker is Ok".getBytes();
+            byte[] message = (adrress.getHostAddress() + ";" + port).getBytes();
             DatagramPacket pack = new DatagramPacket(message, message.length);
             
             while (true) {
@@ -39,9 +44,7 @@ public class TrackerStillAlive extends Thread {
 
                 sleep(1000);
             }
-        } catch (InterruptedException intEx) {
-
-        } catch (IOException ex) {
+        } catch (InterruptedException | IOException ex) {
         }
     }
 

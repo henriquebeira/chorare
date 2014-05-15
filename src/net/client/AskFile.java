@@ -4,20 +4,27 @@
  * and open the template in the editor.
  */
 
-package chorare_pacote;
+package net.client;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 /**
- * Classe que faz o recebimento efetivo dos arquivos transferidos.
- * 
+ *
  * @author Henrique
  */
-import java.net.*;
-import java.io.*;
-
-public class TCP_Client_Transferencia implements Runnable {
-
-    private final int portaServidor, portaCliente;
+class AskFile extends Thread{
+    
     private final String arquivodesejado, caminhoDoDiretorio;
+    private InetAddress address;
+    private int port;
 
     /**
      * Construtora da classe. 
@@ -27,11 +34,11 @@ public class TCP_Client_Transferencia implements Runnable {
      * @param portaCliente Porta do peer que irá receber o arquivo solicitado.
      * @param arquivodesejado Nome do arquivo a ser transferido.
      */
-    TCP_Client_Transferencia(String caminhoDoDiretorio, int portaServidor, int portaCliente, String arquivodesejado) {
+    AskFile(String caminhoDoDiretorio, InetAddress address, int port, String arquivodesejado) {
         this.caminhoDoDiretorio = caminhoDoDiretorio;
-        this.portaServidor = portaServidor;
-        this.portaCliente = portaCliente;
         this.arquivodesejado = arquivodesejado;
+        this.address = address;
+        this.port = port;
     }
 
     /**
@@ -44,8 +51,7 @@ public class TCP_Client_Transferencia implements Runnable {
         Socket socket = null;
         try {
             // Conectar com o Processo que tem o arquivo solicitado, pela porta de final 4, e.g. 8014 (quando o peer é 8010)
-            int serverPort = portaServidor+4;
-            socket = new Socket("localhost", serverPort); // Abre conexão com o peer desejado
+            socket = new Socket(address, port); // Abre conexão com o peer desejado
             DataInputStream in = new DataInputStream(socket.getInputStream()); // Pega o stream de entrada
             DataOutputStream out = new DataOutputStream(socket.getOutputStream()); // Pega o stream de saída
             out.writeUTF(arquivodesejado);      	// Faz requisição do arquivo...
@@ -56,9 +62,9 @@ public class TCP_Client_Transferencia implements Runnable {
             if (!nomeDoArquivo.equals("--1")) {
                 FileOutputStream fos;
                 if (nomeDoArquivo.equals("public_key")||nomeDoArquivo.equals("assinatura")) { // se for um dos arquivos de controle / requisição para o tracker
-                    fos = new FileOutputStream(new File(caminhoDoDiretorio+portaCliente+ File.separator+ "controle"+File.separator+arquivodesejado));
+                    fos = new FileOutputStream(new File(caminhoDoDiretorio + File.separator + "controle" + File.separator + arquivodesejado));
                 } else { // se for uma requisição para um arquivo comum de outro peer
-                    fos = new FileOutputStream(new File(caminhoDoDiretorio+portaCliente+ File.separator+ arquivodesejado));
+                    fos = new FileOutputStream(new File(caminhoDoDiretorio + File.separator + arquivodesejado));
                 }
                 byte[] buf = new byte[4096];
                 int i = 1;

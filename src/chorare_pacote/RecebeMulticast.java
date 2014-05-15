@@ -92,8 +92,8 @@ public class RecebeMulticast implements Runnable{
             // Preparar peers para realizar requisições
             Thread.sleep(5000);
             System.out.println("Iniciar TCP_Client_Busca");
-            Thread thread5 = new Thread(new TCP_Client_Busca(caminhoDoDiretorio, vencedor.getPorta(), numeroPortaPasta));
-            thread5.start();
+//            Thread thread5 = new Thread(new TCP_Client_Busca(caminhoDoDiretorio, vencedor.getPorta(), numeroPortaPasta));
+//            thread5.start();
             
         } catch (SocketException e) {
             System.out.println("Socket: " + e.getMessage());

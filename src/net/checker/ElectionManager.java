@@ -13,6 +13,8 @@ import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import net.client.Client;
+import net.tracker.Tracker;
 
 /**
  *
@@ -73,7 +75,11 @@ public class ElectionManager extends Thread {
 
                 if (voto == -1) {
                     //TODO set tracker
-                    
+
+                    InetAddress address = InetAddress.getByName(parts[2]);
+
+                    checker.getMain().setTrackerAddress(address);
+
                 } else {
                     votacao.add(new Voto(porta, voto));
                 }
@@ -90,7 +96,19 @@ public class ElectionManager extends Thread {
                 // Inicializa o tracker
                 //Thread thread_recebe_lista = new Thread(new TCP_Recebe_Lista(caminhoDoDiretorio, numeroPortaPasta));
                 //thread_recebe_lista.start();
+                try {
+                    Tracker trackerThread = new Tracker(checker.getMain());
+
+                    checker.getMain().setAmITracker(true);
+
+                    trackerThread.start();
+                } catch (IOException ex) {
+
+                }
             }
+
+            Client clientThread = new Client(checker.getMain());
+            clientThread.start();
 
             //Inicializa o Client
         } catch (SocketException e) {

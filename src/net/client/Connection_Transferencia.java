@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
+import net.start.Main;
 
 /**
  * Classe para a transfência de arquivos.
@@ -24,6 +25,8 @@ class Connection_Transferencia extends Thread {
     private DataOutputStream out;
     private Socket clientSocket;
     private String caminhoDoDiretorio;
+    
+    private Main main;
 
     /**
      * Construtora da classe.
@@ -31,8 +34,9 @@ class Connection_Transferencia extends Thread {
      * @param aClientSocket Socket vindo de TCP_Server_Transferencia.
      * @param caminho Caminho raíz do diretório que está atuando como o Tracker.
      */
-    public Connection_Transferencia(Socket aClientSocket, String caminho) {
+    public Connection_Transferencia(Main main, Socket aClientSocket, String caminho) {
         try {
+            this.main = main;
             clientSocket = aClientSocket;
             this.caminhoDoDiretorio = caminho;
             in = new DataInputStream(clientSocket.getInputStream());
@@ -48,12 +52,13 @@ class Connection_Transferencia extends Thread {
      * Envia o arquivo desejado, já sabendo que ele existe.
      */
     public void run() {
-        try {			                 
-            String nomeDoArquivo = in.readUTF();	                  // read a line of data from the stream
+        try {
+            String nomeDoArquivo = in.readUTF();  // read a line of data from the stream
             System.out.println("Connection_Transferencia recebeu: " + nomeDoArquivo);
-            if (nomeDoArquivo.equals("public_key")||nomeDoArquivo.equals("assinatura")) {
+            if ((nomeDoArquivo.equals("public_key")||nomeDoArquivo.equals("assinatura")) && main.isAmITracker()) {
                 caminhoDoDiretorio = caminhoDoDiretorio+File.separator+"controle";
             }
+            
             for (File file : new File(caminhoDoDiretorio).listFiles()) {
                 if (file.getName().equals(nomeDoArquivo)) {
                     out.writeUTF(nomeDoArquivo);

@@ -6,6 +6,7 @@
 
 package net.client;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -19,19 +20,22 @@ import net.start.Main;
 public class Client extends Thread{
     private Main main;
     
-    private final int portaServidor;
+//    private final int portaServidor;
     private final String caminhoDoDiretorio;
+    
+    private ServerSocket listenSocket; 
 
     /**
      * Construtora da classe.
      * 
-     * @param caminhoDoDiretorio Caminho raíz dos diretórios de todos os processos.
-     * @param porta Porta que será utilizada para realizar a transferência de um arquivo.
+     * 
+     * @param main Referência para a classe principal que instânciou este processo.
      */
-    Client(Main main, String caminhoDoDiretorio, int porta) {
+    public Client(Main main) {
         this.main = main;
-        this.caminhoDoDiretorio = caminhoDoDiretorio;
-        this.portaServidor = porta;
+        this.caminhoDoDiretorio = main.getDefaultDiretory().getPath() + File.separator + main.getNickName();
+//        this.portaServidor = porta;
+        
     }
 
     /**
@@ -40,13 +44,10 @@ public class Client extends Thread{
     @Override
     public void run() {
         try {
-            int serverPort = portaServidor+4; 
-            System.out.println("TCP_Server_Transferencia: "+serverPort);
-            String caminhoCompletoDiretorio = caminhoDoDiretorio+portaServidor;
-            ServerSocket listenSocket = new ServerSocket(serverPort);
+            listenSocket = new ServerSocket();
             while (true) {
                 Socket clientSocket = listenSocket.accept();
-                Connection_Transferencia c = new Connection_Transferencia(clientSocket, caminhoCompletoDiretorio);
+                Connection_Transferencia c = new Connection_Transferencia(main, clientSocket, caminhoDoDiretorio);
             }
         } catch (IOException e) {
             System.out.println("Listen socket:" + e.getMessage());
@@ -54,14 +55,24 @@ public class Client extends Thread{
     }
     
     public void enviaLista(){
-        
+        ClientSendList sendList = new ClientSendList(main, listenSocket.getInetAddress(), listenSocket.getLocalPort());
+        sendList.start();
     }
     
     public void realizarBusca(String buscar){
-        
+        ClientSearch search = new ClientSearch(main, buscar);
+        search.start();
+    }
+    
+    public void searchResult(String[][] data){
+        main.getGui().searchDone(data);
     }
     
     public void requererArquivoPeer(String nomeArquivo, InetAddress[] addresses){
         
+    }
+
+    int getAddressPort() {
+        return listenSocket.getLocalPort();
     }
 }

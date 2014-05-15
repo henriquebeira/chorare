@@ -19,9 +19,11 @@ import java.io.*;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.start.Main;
 
 public class TCP_Client_Busca implements Runnable {
-
+    private Main main;
+    
     private final int portaServidor, portaCliente;
     private String caminhoDoDiretorio;
     private VerificadorAssinatura verificadorAssinatura;
@@ -33,7 +35,9 @@ public class TCP_Client_Busca implements Runnable {
      * @param portaServidor Porta do Tracker.
      * @param portaCliente Porta do peer.
      */
-    TCP_Client_Busca(String caminhoDoDiretorio, int portaServidor, int portaCliente) {
+    TCP_Client_Busca(Main main, String caminhoDoDiretorio, int portaServidor, int portaCliente) {
+        this.main = main;
+        
         this.caminhoDoDiretorio = caminhoDoDiretorio;
         this.portaServidor = portaServidor;
         this.portaCliente = portaCliente;
@@ -58,11 +62,12 @@ public class TCP_Client_Busca implements Runnable {
             System.out.print("Porta Servidor Busca: " + serverPort + "\n");
             
             // Recebimento da chave pública do Tracker
-            if (portaCliente != portaServidor) {
-                Thread thread3 = new Thread(new TCP_Server_Transferencia(caminhoDoDiretorio, portaServidor));
-                thread3.start();
-
-                Thread.sleep(3000);
+//            if (portaCliente != portaServidor) {
+            if (!main.isAmITracker()) {
+//                Thread thread3 = new Thread(new TCP_Server_Transferencia(caminhoDoDiretorio, portaServidor));
+//                thread3.start();
+//
+//                Thread.sleep(3000);
                 Thread thread4 = new Thread(new TCP_Client_Transferencia(caminhoDoDiretorio, portaServidor, portaCliente, "public_key"));
                 thread4.start();
             }

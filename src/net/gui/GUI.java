@@ -84,4 +84,8 @@ public class GUI extends JFrame{
     public void setClientThread(Client clientThread) {
         this.clientThread = clientThread;
     }
+
+    public void searchDone(String[][] data) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

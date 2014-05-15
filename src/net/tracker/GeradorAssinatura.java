@@ -31,7 +31,6 @@ package net.tracker;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import chorare_pacote.*;
 import java.io.*;
 import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -53,10 +52,10 @@ class GeradorAssinatura {
      * @param caminhoDiretorio Caminho raíz do diretório do Tracker.
      */
     public GeradorAssinatura(String caminhoDiretorio) {
-        this.caminhoPublicKey = caminhoDiretorio + File.separator + "controle" + File.separator + "public_key";
-        this.caminhoAssinatura = caminhoDiretorio + File.separator + "controle" + File.separator+"assinatura";
-        this.caminhoDoArquivoQuemTem = caminhoDiretorio + File.separator + "controle" + File.separator+"quemTem.txt";
-        this.caminhoPrivateKey = caminhoDiretorio + File.separator + "controle" + File.separator+"private_key";
+        this.caminhoPublicKey = caminhoDiretorio + File.separator + "controle" + File.separator + "track" + File.separator +"public_key";
+        this.caminhoAssinatura = caminhoDiretorio + File.separator + "controle" + File.separator+"track" + File.separator +"assinatura";
+        this.caminhoDoArquivoQuemTem = caminhoDiretorio + File.separator + "controle" + File.separator+"track" + File.separator +"quemTem.txt";
+        this.caminhoPrivateKey = caminhoDiretorio + File.separator + "controle" + File.separator+"track" + File.separator +"private_key";
     }
 
     /**
