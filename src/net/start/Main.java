@@ -39,9 +39,21 @@ public class Main {
             thisM = new Main(nick);
         }
         
-        thisM.checker = new StatusChecker();
+        thisM.checker = new StatusChecker(thisM);
         thisM.checker.start();
         
-        thisM.gui = new GUI(checker.getClient());
+        thisM.gui = new GUI(thisM);
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public StatusChecker getChecker() {
+        return checker;
+    }
+
+    public GUI getGui() {
+        return gui;
     }
 }

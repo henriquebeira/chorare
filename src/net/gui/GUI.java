@@ -9,6 +9,8 @@ package net.gui;
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import net.client.Client;
+import net.start.Main;
 
 /**
  *
@@ -17,15 +19,19 @@ import javax.swing.JPanel;
 public class GUI extends JFrame{
     private boolean hasTracker;
     
+    private Main main;
+    private Client clientThread;
+    
     private JPanel await;
     private JPanel client;
     
     private byte mode;
     
-    private Byte MODE_AWAITING = 0;
-    private Byte MODE_OK = 1;
+    private static final Byte MODE_AWAITING = 0;
+    private static final Byte MODE_OK = 1;
 
-    public GUI() {
+    public GUI(Main main) {
+        this.main = main;
         this.setLayout(new BorderLayout());
         
         hasTracker = false;
@@ -69,5 +75,13 @@ public class GUI extends JFrame{
             this.remove(await);
             this.add(client);
         }
+    }
+
+    public Client getClientThread() {
+        return clientThread;
+    }
+
+    public void setClientThread(Client clientThread) {
+        this.clientThread = clientThread;
     }
 }

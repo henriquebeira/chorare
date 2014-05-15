@@ -7,14 +7,17 @@
 package net.client;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import net.start.Main;
 
 /**
  *
  * @author a1155997
  */
 public class Client extends Thread{
+    private Main main;
     
     private final int portaServidor;
     private final String caminhoDoDiretorio;
@@ -25,7 +28,8 @@ public class Client extends Thread{
      * @param caminhoDoDiretorio Caminho raíz dos diretórios de todos os processos.
      * @param porta Porta que será utilizada para realizar a transferência de um arquivo.
      */
-    Client(String caminhoDoDiretorio, int porta) {
+    Client(Main main, String caminhoDoDiretorio, int porta) {
+        this.main = main;
         this.caminhoDoDiretorio = caminhoDoDiretorio;
         this.portaServidor = porta;
     }
@@ -57,7 +61,7 @@ public class Client extends Thread{
         
     }
     
-    public void requererArquivoPeer(String nomeArquivo){
+    public void requererArquivoPeer(String nomeArquivo, InetAddress[] addresses){
         
     }
 }

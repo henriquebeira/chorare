@@ -14,6 +14,7 @@ import java.net.MulticastSocket;
 import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.start.Main;
 
 /**
  * Thread responsável por iniciar a eleição.
@@ -23,7 +24,13 @@ import java.util.logging.Logger;
 public class StatusChecker extends Thread{
     private static final int tempoSleep = 1000; // Tempo de espera entre envios de mensagem.
     
+    private Main main;
+    
     private boolean waitingMoreparticipants = true;
+
+    public StatusChecker(Main main) {
+        this.main = main;
+    }
     
     @Override
     public void run() {
@@ -62,6 +69,10 @@ public class StatusChecker extends Thread{
     
     public void setWaitingMoreParticipants(boolean wait){
         waitingMoreparticipants = wait;
+    }
+
+    public Main getMain() {
+        return main;
     }
     
     

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import net.start.Main;
 
 /**
  * Classe que o Tracker usa para iniciar a conexão que receberá as requisições
@@ -17,6 +18,7 @@ import java.net.Socket;
  * @author Henriques
  */
 public class Tracker extends Thread {
+    private Main main;
 
     private final GeradorAssinatura gerarParChaves;
     int numeroPortaPasta;
@@ -31,7 +33,8 @@ public class Tracker extends Thread {
      * @param caminhoDaPasta
      * @param porta
      */
-    Tracker() {
+    public Tracker(Main main) {
+        this.main = main;
         gerarParChaves = new GeradorAssinatura(caminhoDaPasta + File.separator + numeroPortaPasta);
         
         stillAlive = new TrackerStillAlive();
