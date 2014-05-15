@@ -7,10 +7,12 @@
 package net.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import net.client.Client;
 import net.start.Main;
+import org.jdesktop.swingx.JXBusyLabel;
 
 /**
  *
@@ -31,16 +33,31 @@ public class GUI extends JFrame{
     private static final Byte MODE_OK = 1;
 
     public GUI(Main main) {
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setMinimumSize(new Dimension(500, 400));
         this.main = main;
         this.setLayout(new BorderLayout());
         
+        mode = -1;
+        
         hasTracker = false;
         
-        awaitTracker();
+        await = new JPanel(new BorderLayout());
         
-        await = new JPanel();
+        JXBusyLabel busy = new JXBusyLabel(new Dimension(150, 150));
+        
+        busy.setBusy(true);
+        busy.setDelay(30);
+        busy.setHorizontalAlignment(JXBusyLabel.CENTER);
+        
+        busy.getBusyPainter().setPoints(100);
+        busy.getBusyPainter().setTrailLength(10);
+        
+        await.add(busy);
         
         client = new JPanel();
+        
+        updateState();
         
         this.setVisible(true);
     }

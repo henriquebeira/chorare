@@ -109,6 +109,8 @@ public class StatusChecker extends Thread {
                     break; // Encerra método
                 }
             }
+            
+            main.getGui().setHasTracker(false);
 
         } catch (SocketException e) {
             System.out.println("Socket: " + e.getMessage());

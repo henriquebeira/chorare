@@ -110,7 +110,9 @@ public class ElectionManager extends Thread {
             Client clientThread = new Client(checker.getMain());
             clientThread.start();
 
-            //Inicializa o Client
+            checker.getMain().getGui().setHasTracker(true);
+            checker.getMain().getGui().setClientThread(clientThread);
+            
         } catch (SocketException e) {
             System.out.println("Socket: " + e.getMessage());
         } catch (IOException e) {
