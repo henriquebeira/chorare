@@ -68,8 +68,8 @@ public class Client extends Thread{
         main.getGui().searchDone(data);
     }
     
-    public void requererArquivoPeer(String nomeArquivo, InetAddress[] addresses){
-        
+    public void requererArquivoPeer(String nomeArquivo, InetAddress address, int port){
+        new AskFile(caminhoDoDiretorio, address, port, nomeArquivo);
     }
 
     int getAddressPort() {
