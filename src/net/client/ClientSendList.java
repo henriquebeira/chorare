@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.net.UnknownHostException;
 import net.start.Main;
 
@@ -25,7 +26,7 @@ class ClientSendList extends Thread{
 //    private final String caminhoDoDiretorio;
     
     private Main main;
-    private InetAddress receiveAddress;
+    private SocketAddress receiveAddress;
     private int receivePort;
 
     /**
@@ -35,7 +36,7 @@ class ClientSendList extends Thread{
      * @param portaVencedora Porta do Processo que atua como Tracker.
      * @param estaPorta Identificação do Processo.
      */
-    public ClientSendList(Main main, InetAddress receiveAddress, int receivePort) {
+    public ClientSendList(Main main, SocketAddress receiveAddress, int receivePort) {
         this.main = main;
         this.receiveAddress = receiveAddress;
         this.receivePort = receivePort;
@@ -50,24 +51,27 @@ class ClientSendList extends Thread{
         Socket socket = null;
         try {
 //            int portaTracker = portaVencedora;
-            socket = new Socket(main.getTrackerAddress(), main.getTrackerPort());
+            socket = new Socket(InetAddress.getLocalHost(), main.getListPort());
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             
-            if (!new File(main.getDefaultDiretory().getPath() + File.separator + main.getNickName()).exists()) { // Verifica se o diretório existe.   
-                (new File(main.getDefaultDiretory().getPath() + File.separator + main.getNickName())).mkdirs();   // Cria o diretório   
+            if (!new File(main.getDefaultDiretory().getPath()).exists()) { // Verifica se o diretório existe.   
+                (new File(main.getDefaultDiretory().getPath())).mkdir();   // Cria o diretório   
             }
             
-            if (!new File(main.getDefaultDiretory().getPath() + File.separator + main.getNickName() + File.separator + "controle").exists()) { // Verifica se o diretório existe.   
-                (new File(main.getDefaultDiretory().getPath() + File.separator + main.getNickName() + File.separator + "controle")).mkdir();   // Cria o diretório   
+            if (!new File(main.getDefaultDiretory().getPath() + File.separator + "controle").exists()) { // Verifica se o diretório existe.   
+                (new File(main.getDefaultDiretory().getPath() + File.separator + "controle")).mkdir();   // Cria o diretório   
             }
 
-            for (File file : new File(main.getDefaultDiretory().getPath() + File.separator + main.getNickName()).listFiles()) {
+            for (File file : new File(main.getDefaultDiretory().getPath()).listFiles()) {
                 if(!file.getName().equals("controle")) // Ignora o diretório denominado "controle"
                 {
-                    out.writeUTF(receiveAddress.getHostAddress() + ";" + receivePort + ";" + file.getName() + ";");
+                    out.writeUTF(receiveAddress + ";" + receivePort + ";" + file.getName() + ";");
 //                    System.out.println(numeroDesteProcesso + " respondeu que tem os arquivos: " + file.getName());
                 }
             }
+            
+            System.out.println("Lista enviada.");
+            
             out.close();
             socket.close();
             

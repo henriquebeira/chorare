@@ -76,6 +76,8 @@ public class SearchRequest extends Thread {
                     out.write(buf, 0, len);
                 }
             }
+            
+            System.out.println("PublicKey está Ok");
 
             // Espera por dados...
             String requerente = in.readUTF();
@@ -127,7 +129,7 @@ public class SearchRequest extends Thread {
             achou = false;
 
         } catch (EOFException e) {
-            System.out.println("EOF:" + e.getMessage());
+            System.out.println("Search Request - EOF:" + e.getMessage());
         } catch (IOException e) {
             System.out.println("readline:" + e.getMessage());
         } finally {

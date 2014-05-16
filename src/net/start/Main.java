@@ -8,6 +8,7 @@ package net.start;
 
 import java.io.File;
 import java.net.InetAddress;
+import java.net.SocketAddress;
 import java.util.Scanner;
 import net.checker.StatusChecker;
 import net.client.Client;
@@ -27,6 +28,7 @@ public class Main {
     private int trackerPort;
     
     private final File defaultDiretory;
+    private int listPort;
 
     public Main(String nickName) {
         this.nickName = nickName;
@@ -102,5 +104,13 @@ public class Main {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public void setListPort(int port) {
+        this.listPort = port;
+    }
+
+    public int getListPort() {
+        return listPort;
     }
 }

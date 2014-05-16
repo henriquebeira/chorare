@@ -7,9 +7,12 @@
 package net.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import net.client.Client;
 import net.start.Main;
 import org.jdesktop.swingx.JXBusyLabel;
@@ -26,6 +29,8 @@ public class GUI extends JFrame{
     
     private JPanel await;
     private JPanel client;
+    private JPanel statusPanel;
+    private JTabbedPane tabPanel;
     
     private byte mode;
     
@@ -55,7 +60,20 @@ public class GUI extends JFrame{
         
         await.add(busy);
         
-        client = new JPanel();
+        client = new JPanel(new BorderLayout());
+        
+        JPanel northP = new JPanel(new FlowLayout());
+        JPanel centerP = new JPanel(new BorderLayout());
+        
+        tabPanel = new JTabbedPane(JTabbedPane.TOP);
+        
+        statusPanel = new JPanel();
+        statusPanel.setBackground(Color.yellow);
+        
+        tabPanel.addTab("Atividade", statusPanel);
+        
+        client.add(northP, BorderLayout.NORTH);
+        client.add(tabPanel);
         
         updateState();
         

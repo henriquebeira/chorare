@@ -13,7 +13,8 @@ package chorare_pacote;
  */
 
 public class Voto {
-    private int porta, voto;
+    private int voto;
+    private String nick;
 
     /**
      * Construtora da classe.
@@ -21,17 +22,17 @@ public class Voto {
      * @param porta Porta/Identificação do Processo.
      * @param voto Número que representa o voto do Processo.
      */
-    public Voto(int porta, int voto) {
-        this.porta = porta;
+    public Voto(String porta, int voto) {
+        this.nick = porta;
         this.voto = voto;
     }
 
-    public int getPorta() {
-        return porta;
+    public String getNick() {
+        return nick;
     }
 
-    public void setPorta(int porta) {
-        this.porta = porta;
+    public void setNick(String porta) {
+        this.nick = porta;
     }
 
     public int getVoto() {

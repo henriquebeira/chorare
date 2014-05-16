@@ -175,7 +175,7 @@ class ClientSearch extends Thread {
         } catch (UnknownHostException e) {
             System.out.println("Socket:" + e.getMessage());
         } catch (EOFException e) {
-            System.out.println("EOF:" + e.getMessage());
+            System.out.println("Client Search - EOF:" + e.getMessage());
         } catch (IOException e) {
             System.out.println("TCP_Client_Busca readline:" + e.getMessage());
         } finally {

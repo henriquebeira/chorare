@@ -39,6 +39,7 @@ public class StatusChecker extends Thread {
     public void run() {
         while (stillAlive) {
             if (main.getTrackerAddress() == null) { // Se não existe um Tracker ativo
+//                System.out.println("Em votação");
                 sendVote(); // Inicia votação
             } else { // Se já houver um Tracker
                 listenTracker(); // Fica ouvindo se ele continua ativo.
@@ -52,18 +53,20 @@ public class StatusChecker extends Thread {
         MulticastSocket s = null;
         try {
             InetAddress group = InetAddress.getByName("228.5.6.7");
-            s = new MulticastSocket();
+            s = new MulticastSocket(6789);
 
-            int porta = s.getLocalPort();
+//            int porta = s.getLocalPort();
 
             s.joinGroup(group);
             long voto = (long) (0 + Math.random() * 10000); // Sorteia um voto
-            byte[] mensagem = (porta + ";" + voto + ";").getBytes();
+            byte[] mensagem = (main.getNickName() + ";" + voto + ";").getBytes();
 
             // Envia mensagens...
             while (waitingMoreparticipants) { // Envia o voto até a eleição acabar
                 DatagramPacket messageOut = new DatagramPacket(mensagem, mensagem.length, group, 6789);
                 s.send(messageOut);
+                
+                System.out.println("Mensagem enviada");
                 
                 Thread.sleep(tempoSleep);
             }
@@ -85,7 +88,7 @@ public class StatusChecker extends Thread {
         MulticastSocket s = null;
         try {
             InetAddress group = InetAddress.getByName("228.5.6.7");
-            s = new MulticastSocket();
+            s = new MulticastSocket(6798);
             s.setSoTimeout(tempoSleep * 2);
 
             int porta = s.getLocalPort();

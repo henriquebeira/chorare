@@ -64,26 +64,26 @@ public class RecebeMulticast implements Runnable{
                 String[] parts = mensagem.split(";");
                 int porta = Integer.valueOf(parts[0]); // processo
                 int voto = Integer.valueOf(parts[1]); // porta
-                votacao.add(new Voto(porta, voto));
+                votacao.add(new Voto(porta + "", voto));
             }
             
             // Eleição do tracker
             Voto vencedor = quemVenceu();
-            System.out.println("Vencedor "+vencedor.getPorta()+" - "+vencedor.getVoto());
+            System.out.println("Vencedor "+vencedor.getNick()+" - "+vencedor.getVoto());
             
             // Prepara o vencedor para receber lista de outros peers
-            if (vencedor.getPorta() == numeroPortaPasta){
+            if (vencedor.getNick().equals(""+numeroPortaPasta)){
                 Thread thread_recebe_lista = new Thread(new TCP_Recebe_Lista(caminhoDoDiretorio, numeroPortaPasta));
                 thread_recebe_lista.start();
             }
             
             // Todos os peers enviam seus arquivos para o tracker
             Thread.sleep(10000);
-            Thread thread4 = new Thread(new TCP_Envia_Lista(caminhoDoDiretorio, vencedor.getPorta(), numeroPortaPasta));
-            thread4.start();
+//            Thread thread4 = new Thread(new TCP_Envia_Lista(caminhoDoDiretorio, vencedor.getNick(), numeroPortaPasta));
+//            thread4.start();
             
             // Preparar tracker para responder requisições de quem tem um determinado arquivo
-            if (vencedor.getPorta() == numeroPortaPasta) {
+            if (vencedor.getNick().equals(""+ numeroPortaPasta)) {
                 System.out.println("Iniciar TCP_Server_Busca");
                 Thread thread5 = new Thread(new TCP_Server_Busca(caminhoDoDiretorio, numeroPortaPasta));
                 thread5.start();
@@ -115,7 +115,7 @@ public class RecebeMulticast implements Runnable{
      */
     // Retorna o vencedor da eleição para Tracker
     public Voto quemVenceu (){
-        Voto peerVencedor = new Voto(0, 0);
+        Voto peerVencedor = new Voto("", 0);
         for(int i=0 ; i<votacao.size() ; i++){
             if(votacao.get(i).getVoto() > peerVencedor.getVoto()){
                 peerVencedor = votacao.get(i);

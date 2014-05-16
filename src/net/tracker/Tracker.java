@@ -5,12 +5,10 @@
  */
 package net.tracker;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.start.Main;
 
 /**
@@ -42,10 +40,13 @@ public class Tracker extends Thread {
      */
     public Tracker(Main main) throws IOException {
         this.main = main;
-        listenSocket = new ServerSocket();
-        caminhoDaPasta = main.getDefaultDiretory().getPath() + File.separator + main.getNickName();
+        listenSocket = new ServerSocket(0, 0, InetAddress.getLocalHost());
+        
+        caminhoDaPasta = main.getDefaultDiretory().getPath();
 
         gerarParChaves = new GeradorAssinatura(caminhoDaPasta);
+        
+//        System.out.println("Here: " + listenSocket.getInetAddress());
 
         stillAlive = new TrackerStillAlive(listenSocket.getInetAddress(), listenSocket.getLocalPort());
         stillAlive.start();
@@ -69,6 +70,7 @@ public class Tracker extends Thread {
                 SearchRequest c = new SearchRequest(clientSocket, caminhoDaPasta);
             }
         } catch (IOException e) {
+            e.printStackTrace();
         }
 
         kill();
@@ -81,5 +83,9 @@ public class Tracker extends Thread {
 
     public ServerSocket getListenSocket() {
         return listenSocket;
+    }
+    
+    public int getListPort(){
+        return receiveList.getListenSocket().getLocalPort();
     }
 }

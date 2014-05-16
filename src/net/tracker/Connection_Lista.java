@@ -32,9 +32,8 @@ class Connection_Lista extends Thread {
      * @param caminho Caminho raíz, já com a identificação do Tracker.
      * @param fos Fluxo para a construção do arquivo lista.txt.
      */
-    public Connection_Lista(Socket aClientSocket, String caminho, FileOutputStream fos) {
+    public Connection_Lista(Socket aClientSocket, String caminho) {
         try {
-            this.fos = fos;
             clientSocket = aClientSocket;
             this.caminhoCompletoDoDiretorio = caminho;
             in = new DataInputStream(clientSocket.getInputStream());
@@ -63,7 +62,7 @@ class Connection_Lista extends Thread {
             this.interrupt();
 
         } catch (IOException e) {
-            System.out.println("readline:" + e.getMessage());
+            System.out.println("Connection Lista - readline:" + e.getMessage());
         } finally {
             try {
                 clientSocket.close();

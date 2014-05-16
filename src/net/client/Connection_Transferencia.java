@@ -78,7 +78,7 @@ class Connection_Transferencia extends Thread {
             clientSocket.close();
             
         } catch (EOFException e) {
-            System.out.println("EOF:" + e.getMessage());
+            System.out.println("ConnectionTransferencia - EOF:" + e.getMessage());
         } catch (IOException e) {
             System.out.println("readline:" + e.getMessage());
         } finally {
