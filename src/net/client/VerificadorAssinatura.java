@@ -63,7 +63,7 @@ class VerificadorAssinatura {
      * Criação do objeto Assinatura com a chave pública.
      * Importação do arquivo quemTem.txt e verificando se a assinatura, em conjunto com a chave pública, é do Tracker que assinou.
      * 
-     * @return Retorna "true" se a verificação comprovar a veracidade do arquivo quemTem.txt.
+     * @return Retorna "true" se a verificação comprovar a veracidade da origem do arquivo quemTem.txt.
      */
     public boolean verificar() {
         try {

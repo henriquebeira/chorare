@@ -17,7 +17,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 /**
- *
+ * 
+ * 
  * @author Henrique
  */
 class AskFile extends Thread{
@@ -30,8 +31,7 @@ class AskFile extends Thread{
      * Construtora da classe. 
      * 
      * @param caminhoDoDiretorio Caminho raiz de todos os processos.
-     * @param portaServidor Porta do peer que irá enviar o arquivo solicitado.
-     * @param portaCliente Porta do peer que irá receber o arquivo solicitado.
+     * @param port Porta do Processo que tem o arquivo solicitado.
      * @param arquivodesejado Nome do arquivo a ser transferido.
      */
     AskFile(String caminhoDoDiretorio, InetAddress address, int port, String arquivodesejado) {
@@ -42,7 +42,7 @@ class AskFile extends Thread{
     }
 
     /**
-     * Conexão com o Processo que tem o arquivo solicitado, pela porta de final 4, e.g. 8014 (quando o peer é 8010).
+     * Conexão com o Processo que tem o arquivo solicitado.
      * Recebimento do arquivo, no diretório adequado para cada tipo de arquivo.
      * 
      */
@@ -50,14 +50,14 @@ class AskFile extends Thread{
     public void run() {
         Socket socket = null;
         try {
-            // Conectar com o Processo que tem o arquivo solicitado, pela porta de final 4, e.g. 8014 (quando o peer é 8010)
+            // Conectar com o Processo que tem o arquivo solicitado
             socket = new Socket(address, port); // Abre conexão com o peer desejado
             DataInputStream in = new DataInputStream(socket.getInputStream()); // Pega o stream de entrada
             DataOutputStream out = new DataOutputStream(socket.getOutputStream()); // Pega o stream de saída
             out.writeUTF(arquivodesejado);      	// Faz requisição do arquivo...
             
             String nomeDoArquivo = in.readUTF();	    //... e recebe a resposta com os dados
-            System.out.println("TCP_Client_Transferencia recebeu: " + nomeDoArquivo);
+            System.out.println("AskFile recebeu: " + nomeDoArquivo);
             //Se NÃO recebeu --1, baixe o arquivo
             if (!nomeDoArquivo.equals("--1")) {
                 FileOutputStream fos;

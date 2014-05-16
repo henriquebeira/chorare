@@ -6,9 +6,10 @@
 package net.client;
 
 /**
- * Classe para a requisição de busca de arquivos para o Tracker. Requisição da
- * chave pública, disponibilizada pelo Tracker. Requisição do arquivo desejado
- * ao Tracker. Recebimento de quemTem.txt, assim como da sua assinatura.
+ * Classe para a requisição de busca de arquivos para o Tracker. 
+ * Requisição da chave pública, disponibilizada pelo Tracker. 
+ * Requisição do arquivo desejado ao Tracker. 
+ * Recebimento de quemTem.txt, assim como da sua assinatura.
  * Efetivar a transferência do arquivo requisitado, por unicast.
  *
  * @author Henrique
@@ -20,58 +21,36 @@ import net.start.Main;
 class ClientSearch extends Thread {
 
     private Main main;
-
     private final int portaCliente;
-//    private final int portaServidor, portaCliente;
-//    private String caminhoDoDiretorio;
     private VerificadorAssinatura verificadorAssinatura;
-
     private String requestedFile;
 
     /**
-     * Construtora da classe. Preparação do verificador de assinaturas feitas
-     * pelo Tracker.
+     * Construtora da classe. 
+     * Preparação do verificador de assinaturas feitas pelo Tracker, com o caminho raíz do diretório.
      *
-     * @param caminhoDoDiretorio Caminho raíz dos processos.
-     * @param portaServidor Porta do Tracker.
-     * @param portaCliente Porta do peer.
+     * @param main Classe principal dos processos.
+     * @param file Nome do arquivo requisitado.
      */
     public ClientSearch(Main main, String file) {
         this.main = main;
-//        this.caminhoDoDiretorio = caminhoDoDiretorio;
-//        this.portaServidor = portaServidor;
         this.portaCliente = main.getClient().getAddressPort();
         this.requestedFile = file;
         verificadorAssinatura = new VerificadorAssinatura(main.getDefaultDiretory().getPath() + File.separator + main.getNickName());
-
     }
 
     /**
-     * Conexão com a porta de recebimento de buscas do Tracker, que é final 2,
-     * e.g. 8012 (quando o peer é 8010). Recebimento da chave pública do
-     * Tracker. Preparação da entrada que receberá o arquivo desejado para ser
-     * transferido. Recebimento do arquivo quemTem.txt. Recebimento da
-     * assinatura do arquivo quemTem.txt. Se a assinatura foi realmente feita
-     * pelo Tracker, efetivar a transferência do arquivo requisitado com o
-     * Processo indicado pelo quemTem.txt.
-     *
+     * Conexão com a porta de recebimento de buscas do Tracker.
+     * Recebimento da chave pública do Tracker. 
+     * Preparação da entrada que receberá o arquivo desejado para ser transferido. 
+     * Recebimento do arquivo quemTem.txt. 
+     * Recebimento da assinatura do arquivo quemTem.txt. 
+     * Se a assinatura foi realmente feita pelo Tracker, efetivar a monstagem dos resultados na GUI.
      */
     @Override
     public void run() {
         Socket socket = null;
         try {
-//            int serverPort = portaServidor + 2;
-//            System.out.print("Porta Servidor Busca: " + serverPort + "\n");
-
-            // Recebimento da chave pública do Tracker
-//            if (!main.isAmITracker()) {
-////                Thread thread3 = new Thread(new TCP_Server_Transferencia(caminhoDoDiretorio, portaServidor));
-////                thread3.start();
-////
-////                Thread.sleep(3000);
-//                Thread thread4 = new ClientSearch(caminhoDoDiretorio, portaServidor, portaCliente, "public_key");
-//                thread4.start();
-//            }
             socket = new Socket(main.getTrackerAddress(), main.getTrackerPort());
 
             DataInputStream in = new DataInputStream(socket.getInputStream());
@@ -95,11 +74,10 @@ class ClientSearch extends Thread {
             out.writeUTF(requestedFile);   // Faz requisição do arquivo...
 
             String quemTem = in.readUTF();    //... e recebe qual processo tem o arquivo desejado
-            System.out.println("TCP_Client_Busca recebeu quem tem: " + quemTem);
+            System.out.println("ClientSearch recebeu quem tem: " + quemTem);
             //Se NÃO recebeu --1, baixe o arquivo
             if (!quemTem.equals("--1")) {
-                // Recebe o arquivo quemTem.txt, caso o requisitante não seja o próprio Processo que está atuando como Tracker
-//                if (portaCliente != portaServidor) {
+                // Recebe o arquivo quemTem.txt.
                 fos = new FileOutputStream(new File(main.getDefaultDiretory().getPath() + File.separator + main.getNickName() + File.separator + "controle" + File.separator + "quemTem.txt"));
                 buf = new byte[4096];
                 i = 1;
@@ -111,7 +89,7 @@ class ClientSearch extends Thread {
                     fos.write(buf, 0, len);
                 }
 
-                out.writeUTF("assinatura");
+                out.writeUTF("assinatura"); // Receberá a assinatura do quemTem.txt.
 
                 fos = new FileOutputStream(new File(main.getDefaultDiretory().getPath() + File.separator + main.getNickName() + File.separator + "controle" + File.separator + "assinatura"));
                 buf = new byte[4096];
@@ -127,40 +105,15 @@ class ClientSearch extends Thread {
                 in.close();
                 out.close();
                 socket.close();
-//                }
 
-                // Recebimento da assinatura do arquivo quemTem.txt, caso o requisitante não seja o próprio Processo que está atuando como Tracker
-//                Thread.sleep(5000);
-//                if (portaCliente != portaServidor) {
-//                    System.out.println("Buscar assinatura...");
-//                    Thread thread3 = new Thread(new TCP_Server_Transferencia(caminhoDoDiretorio, portaServidor));
-//                    thread3.start();
-//
-//                    Thread.sleep(3000);
-//                    Thread thread4 = new Thread(new TCP_Client_Transferencia(caminhoDoDiretorio, portaServidor, portaCliente, "assinatura"));
-//                    thread4.start();
-//                }
-                // Se a assinatura foi realmente feita pelo Tracker, efetivar a transferência do arquivo requisitado.
-//                Thread.sleep(5000);
+                // Se a assinatura foi realmente feita pelo Tracker, montar os resultados na GUI.
                 if (verificadorAssinatura.verificar() == true) {
                     main.getClient().searchResult(new String[0][0]);
-//                    System.out.println("Assinatura válida!!! ");
-//                    // Abrir e recuperar o Processo que tem o arquivo desejado
-//                    Scanner sc = new Scanner(new File(main.getDefaultDiretory().getPath() + File.separator + main.getNickName() + File.separator + "controle" + File.separator + "quemTem.txt"));
-//                    String numeroProcesso = sc.nextLine();
-//                    System.out.println("TCP_Client_Busca conecta com o Processo: " + numeroProcesso);
-//
-//                    // Recebe o diretório/processo que tem o arquivo solicitado, e prepara transferência
-//                    Thread thread3 = new Thread(new TCP_Server_Transferencia(caminhoDoDiretorio, Integer.parseInt(numeroProcesso)));
-//                    thread3.start();
-//
-//                    Thread.sleep(3000);
-//                    Thread thread4 = new Thread(new TCP_Client_Transferencia(caminhoDoDiretorio, Integer.parseInt(numeroProcesso), portaCliente, arquivodesejado));
-//                    thread4.start();
                 } else {
                     System.out.println("Assinatura inválida! ");
                 }
 
+                // Apaga o conteúdo do arquivo quemTem.txt.
                 fos = new FileOutputStream(new File(main.getDefaultDiretory().getPath() + File.separator + main.getNickName() + File.separator + "controle" + File.separator + "quemTem.txt"));
                 fos.write("".getBytes());
                 fos.close();

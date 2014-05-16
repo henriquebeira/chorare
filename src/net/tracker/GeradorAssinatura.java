@@ -53,9 +53,9 @@ class GeradorAssinatura {
      */
     public GeradorAssinatura(String caminhoDiretorio) {
         this.caminhoPublicKey = caminhoDiretorio + File.separator + "controle" + File.separator + "track" + File.separator +"public_key";
-        this.caminhoAssinatura = caminhoDiretorio + File.separator + "controle" + File.separator+"track" + File.separator +"assinatura";
-        this.caminhoDoArquivoQuemTem = caminhoDiretorio + File.separator + "controle" + File.separator+"track" + File.separator +"quemTem.txt";
-        this.caminhoPrivateKey = caminhoDiretorio + File.separator + "controle" + File.separator+"track" + File.separator +"private_key";
+        this.caminhoAssinatura = caminhoDiretorio + File.separator + "controle" + File.separator + "track" + File.separator +"assinatura";
+        this.caminhoDoArquivoQuemTem = caminhoDiretorio + File.separator + "controle" + File.separator + "track" + File.separator +"quemTem.txt";
+        this.caminhoPrivateKey = caminhoDiretorio + File.separator + "controle" + File.separator + "track" + File.separator +"private_key";
     }
 
     /**

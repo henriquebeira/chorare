@@ -12,8 +12,7 @@ import java.net.Socket;
 import net.start.Main;
 
 /**
- * Classe que o Tracker usa para iniciar a conexão que receberá as requisições
- * de busca dos peers.
+ * Classe que o Tracker usa para iniciar a conexão que receberá as requisições de busca dos peers.
  *
  * @author Henriques
  */
@@ -33,10 +32,9 @@ public class Tracker extends Thread {
     public static final String TrackerOk = "TrackerIsOK!!";
 
     /**
-     * Construtora da classe. Geração do par de chaves privada e pública.
+     * Construtora da classe. 
      *
-     * @param caminhoDaPasta
-     * @param porta
+     * @param main Classe principal do Processo.
      */
     public Tracker(Main main) throws IOException {
         this.main = main;
@@ -57,9 +55,8 @@ public class Tracker extends Thread {
     }
 
     /**
-     * Porta final 2 do Tracker é utilizada para receber requisições de buscas
-     * no tracker, e.g. 8012 (quando peer vencedor for 8010).
-     *
+     * Método para gerar o par de chaves privada e pública.
+     * Abertura de socket para recebimento de buscas.
      */
     @Override
     public void run() {
@@ -76,6 +73,9 @@ public class Tracker extends Thread {
         kill();
     }
 
+    /**
+     * Método para destruir a Thread 
+     */
     private void kill() {
         stillAlive.setHasToDie(true);
         receiveList.setHasToDie(true);

@@ -15,22 +15,19 @@ import java.util.logging.Logger;
 import net.start.Main;
 
 /**
- *
+ * Classe para a Thread Cliente de um Processo.
  * @author a1155997
  */
 public class Client extends Thread {
 
     private Main main;
-//    private final int portaServidor;
     private final String caminhoDoDiretorio;
     private ServerSocket listenSocket;
 
     /**
      * Construtora da classe.
-     *
-     *
-     * @param main Referência para a classe principal que instânciou este
-     * processo.
+     * 
+     * @param main Referência para a classe principal que instânciou este processo.
      */
     public Client(Main main) {
         this.main = main;
@@ -46,8 +43,7 @@ public class Client extends Thread {
     }
 
     /**
-     * Porta Servidora + 4 é a porta utilizada para a transferência de arquivos,
-     * e.g. 8014 (caso o peer seja 8010).
+     * Socket utilizado para a transferência de arquivos por Unicast.
      */
     @Override
     public void run() {
@@ -60,22 +56,40 @@ public class Client extends Thread {
             System.out.println("Listen socket:" + e.getMessage());
         }
     }
-
-    public void enviaLista() {
-        ClientSendList sendList = new ClientSendList(main, listenSocket.getLocalSocketAddress(), listenSocket.getLocalPort());
+    
+    /**
+     * Método para enviar quais arquivos possui.
+     */
+    public void enviaLista(){
+        ClientSendList sendList = new ClientSendList(main, listenSocket.getInetAddress(), listenSocket.getLocalPort());
         sendList.start();
     }
-
-    public void realizarBusca(String buscar) {
+    
+    /**
+     * Método para realizar a busca de um arquivo.
+     * @param buscar Recebe o arquivo que será buscado.
+     */
+    public void realizarBusca(String buscar){
         ClientSearch search = new ClientSearch(main, buscar);
         search.start();
     }
-
-    public void searchResult(String[][] data) {
+    
+    /**
+     * Método para receber os resultados de uma busca.
+     * @param data Recebe os dados do Tracker.
+     */
+    public void searchResult(String[][] data){
         main.getGui().searchDone(data);
     }
-
-    public void requererArquivoPeer(String nomeArquivo, InetAddress address, int port) {
+    
+    /**
+     * Método ?
+     * 
+     * @param nomeArquivo
+     * @param address
+     * @param port 
+     */
+    public void requererArquivoPeer(String nomeArquivo, InetAddress address, int port){
         new AskFile(caminhoDoDiretorio, address, port, nomeArquivo);
     }
 

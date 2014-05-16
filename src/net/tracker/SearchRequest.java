@@ -31,13 +31,11 @@ public class SearchRequest extends Thread {
     private GeradorAssinatura geradorAssinatura;
 
     /**
-     * Construtora da classe. Instância da classe GeradorAssinatura, para
-     * assinar o arquivo quemTem.txt com a identificação de quem tem o arquivo
-     * buscado.
+     * Construtora da classe. 
+     * Instância da classe GeradorAssinatura, para assinar o arquivo quemTem.txt.
      *
      * @param aClientSocket socket vindo de TCP_Server_Busca.
      * @param caminho caminho raíz do diretório.
-     * @param diretorio identificação do diretório que é o Tracker.
      */
     public SearchRequest(Socket aClientSocket, String caminho) {
         try {
@@ -53,11 +51,10 @@ public class SearchRequest extends Thread {
     }
 
     /**
-     * Espera uma requisição, com a identificação do requerente, e o arquivo
-     * buscado. Abre a lista e busca quem tem o arquivo pesquisado. Verifica se
-     * o requerente já possui o arquivo, e escreve no quemTem.txt a
-     * identificação de quem tem o arquivo buscado. Realiza a assinatura do
-     * quemTem.txt e envia este arquivo ao requerente.
+     * Espera uma requisição para buscar um arquivo.
+     * Abre a lista.txt e busca quem tem o arquivo pesquisado. 
+     * Escreve no quemTem.txt a identificação de quem tem o arquivo buscado. 
+     * Realiza a assinatura do quemTem.txt e envia este arquivo ao requerente.
      *
      */
     public void run() {
@@ -82,7 +79,7 @@ public class SearchRequest extends Thread {
             // Espera por dados...
             String requerente = in.readUTF();
             String nomeArquivo = in.readUTF();
-            System.out.println("\n Connection_Busca recebeu: " + nomeArquivo);
+            System.out.println("\n SearchRequest recebeu: " + nomeArquivo);
             BufferedReader br = new BufferedReader(new FileReader(caminhoDaPasta + File.separator + "controle" + File.separator + "track" + File.separator + "lista.txt"));
 
             while (br.ready()) {
@@ -92,7 +89,7 @@ public class SearchRequest extends Thread {
                     System.out.println("Achou o arquivo!! ");
 
                     if (!parts[0].equals(requerente)) {
-                        System.out.println("\n Connection_Busca respondeu quem tem o arquivo: " + parts[0]);
+                        System.out.println("\n SearchRequest respondeu quem tem o arquivo: " + parts[0]);
                         out.writeUTF(parts[0]);
                         FileOutputStream fos = new FileOutputStream(caminhoDaPasta + File.separator + "controle" + File.separator + "track" + File.separator + "quemTem.txt");
                         fos.write((parts[0]).getBytes());

@@ -31,6 +31,7 @@ class Connection_Transferencia extends Thread {
     /**
      * Construtora da classe.
      * 
+     * @param main Classe principal do Processo.
      * @param aClientSocket Socket vindo de TCP_Server_Transferencia.
      * @param caminho Caminho raíz do diretório que está atuando como o Tracker.
      */
@@ -48,7 +49,8 @@ class Connection_Transferencia extends Thread {
     }
 
     /**
-     * Recebe o nome do arquivo para transferir, adicionando o diretório "controle" se for requisições de chave pública ou assinatura do quemTem.txt.
+     * Recebe o nome do arquivo para transferir; 
+     * Caso for requisições de "public_key" ou "assinatura", e for o Tracker, acionar o diretório "controle".
      * Envia o arquivo desejado, já sabendo que ele existe.
      */
     public void run() {

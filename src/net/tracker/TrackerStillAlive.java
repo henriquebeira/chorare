@@ -12,7 +12,8 @@ import java.net.MulticastSocket;
 import java.net.SocketAddress;
 
 /**
- *
+ * Classe para envio de mensagens que está ativo.
+ * 
  * @author a1155997
  */
 public class TrackerStillAlive extends Thread {
@@ -21,11 +22,20 @@ public class TrackerStillAlive extends Thread {
     private InetAddress adrress;
     private int port;
 
+    /**
+     * Construtora da classe.
+     * 
+     * @param adrress Endereço do Tracker.
+     * @param port Porta do Tracker.
+     */
     public TrackerStillAlive(InetAddress adrress, int port) {
         this.adrress = adrress;
         this.port = port;
     }
 
+    /**
+     * Envio de mensagens Multicast com o endereço e porta do Tracker.
+     */
     @Override
     public void run() {
         try {
@@ -50,6 +60,10 @@ public class TrackerStillAlive extends Thread {
         }
     }
 
+    /**
+     * Método para finalizar o envio de mensagens.
+     * @param hasToDie True caso deve parar de enviar mensagens.
+     */
     public void setHasToDie(boolean hasToDie) {
         this.hasToDie = hasToDie;
     }

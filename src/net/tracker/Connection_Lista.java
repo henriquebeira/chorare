@@ -27,8 +27,7 @@ class Connection_Lista extends Thread {
     /**
      * Construtora da classe.
      * 
-     * @param porta Porta do Tracker.
-     * @param aClientSocket Socker vindo de TCP_Recebe_Lista.
+     * @param aClientSocket Socker vindo de TrackerListReceiver.
      * @param caminho Caminho raíz, já com a identificação do Tracker.
      * @param fos Fluxo para a construção do arquivo lista.txt.
      */
@@ -45,7 +44,6 @@ class Connection_Lista extends Thread {
 
     /**
      * Recebimento das mensagens contendo o Processo/Pasta e o arquivo que ele contém, salvando-os em lista.txt.
-     * 
      */
     public void run() {
         try {

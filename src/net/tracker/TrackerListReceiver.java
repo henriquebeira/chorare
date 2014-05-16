@@ -15,7 +15,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Classe 
+ * 
  * @author a1155997
  */
 public class TrackerListReceiver extends Thread {
@@ -28,7 +29,6 @@ public class TrackerListReceiver extends Thread {
      * Construtora da classe.
      *
      * @param caminhoDaPasta Caminho raíz dos diretórios dos processos.
-     * @param porta Porta do Processo vencedor da eleição para Tracker.
      */
     TrackerListReceiver(String caminhoDaPasta) {
         this.caminhoDoDiretorio = caminhoDaPasta;
@@ -39,10 +39,9 @@ public class TrackerListReceiver extends Thread {
     }
 
     /**
-     * Verifica a existência dos diretórios base do Processo. Criação, ou
-     * reinício, do arquivo lista.txt. Inicialização da conexão para recebimento
-     * de mensagens dos outros peers.
-     *
+     * Verifica a existência dos diretórios base do Processo. 
+     * Criação, ou reinício, do arquivo lista.txt.
+     * Inicialização da conexão para recebimento de mensagens dos outros peers.
      */
     @Override
     public void run() {
@@ -79,12 +78,16 @@ public class TrackerListReceiver extends Thread {
                 }
             }
         } catch (IOException e) {
-            System.err.println("TCP_Recebe_Lista - Listen socket:" + e.getMessage());
+            System.out.println("TrackerListReceiver - Listen socket:" + e.getMessage());
         }
 
         System.out.println("Tracker Recebe Lista Finalizado");
     }
 
+    /**
+     * Método para finalizar a construção do lista.txt.
+     * @param hasToDie True caso deve parar de construir a lista.txt.
+     */
     public void setHasToDie(boolean hasToDie) {
         this.hasToDie = hasToDie;
     }
