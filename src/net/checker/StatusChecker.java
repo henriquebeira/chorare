@@ -23,18 +23,22 @@ import net.tracker.Tracker;
  * @author Henrique
  */
 public class StatusChecker extends Thread {
-
     private static final int tempoSleep = 1000; // Tempo de espera entre envios de mensagem.
-
     private Main main;
-
     private boolean waitingMoreparticipants = true;
     private boolean stillAlive = true;
 
+    /**
+     * Recebe o main de um processo inicializado.
+     * @param main Main de um processo.
+     */
     public StatusChecker(Main main) {
         this.main = main;
     }
 
+    /**
+     * Enquanto o processo estiver ativo, envia voto para a eleição de um Tracker, caso contrário fica ouvindo o Tracker.
+     */
     @Override
     public void run() {
         while (stillAlive) {
@@ -46,6 +50,9 @@ public class StatusChecker extends Thread {
         }
     }
 
+    /**
+     * O processo inicializa o gerenciador de eleição, e envia a sua porta e o seu voto para o grupo.
+     */
     private void sendVote() {
         new ElectionManager(this).start(); // Inicializa o gerenciador de votação
 
@@ -80,7 +87,10 @@ public class StatusChecker extends Thread {
             }
         }
     }
-
+    
+    /**
+     * Processo fica ouvindo a mensagem de OK do Tracker, caso contrário considera que não há Tracker ativo.
+     */
     private void listenTracker() {
         MulticastSocket s = null;
         try {
@@ -123,14 +133,26 @@ public class StatusChecker extends Thread {
         }
     }
 
+    /**
+     * Método acessado pelo Gerenciador de Eleição. 
+     * @param wait False quando a eleição terminar.
+     */
     public void setWaitingMoreParticipants(boolean wait) {
         waitingMoreparticipants = wait;
     }
 
+    /**
+     * Método acessado pelo ?
+     * @param stillAlive 
+     */
     public void setStillAlive(boolean stillAlive) {
         this.stillAlive = stillAlive;
     }
 
+    /**
+     * Método acessado pelo Gerenciador de Eleição.
+     * @return Main do Processo.
+     */
     public Main getMain() {
         return main;
     }

@@ -15,7 +15,7 @@ import net.start.Main;
 import org.jdesktop.swingx.JXBusyLabel;
 
 /**
- *
+ * Interface Gráfica do Sistema.
  * @author a1155997
  */
 public class GUI extends JFrame{
@@ -32,6 +32,10 @@ public class GUI extends JFrame{
     private static final Byte MODE_AWAITING = 0;
     private static final Byte MODE_OK = 1;
 
+    /**
+     * Construtora da classe.
+     * @param main Main de um Processo.
+     */
     public GUI(Main main) {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(500, 400));
@@ -62,12 +66,19 @@ public class GUI extends JFrame{
         this.setVisible(true);
     }
 
+    /**
+     * Método para verificar se há um Tracker.
+     * @param hasTracker True se há um Tracker.
+     */
     public void setHasTracker(boolean hasTracker) {
         this.hasTracker = hasTracker;
         
         updateState();
     }
     
+    /**
+     * Método para adicionar um Painel caso não exista um Tracker.
+     */
     private void updateState(){
         if(hasTracker){
             trackerOK();
@@ -76,6 +87,9 @@ public class GUI extends JFrame{
         }
     }
     
+    /**
+     * Método para mostrar um Painel de espera ao Tracker.
+     */
     private void awaitTracker(){
         if(mode != MODE_AWAITING && !hasTracker){
             mode = MODE_AWAITING;
@@ -85,6 +99,9 @@ public class GUI extends JFrame{
         }
     }
     
+    /**
+     * Método para mostrar o Painel de um Processo.
+     */
     private void trackerOK(){
         if(mode != MODE_OK && hasTracker){
             mode = MODE_OK;
@@ -94,14 +111,26 @@ public class GUI extends JFrame{
         }
     }
 
+    /**
+     * Método ?
+     * @return 
+     */
     public Client getClientThread() {
         return clientThread;
     }
 
+    /**
+     * Método ?
+     * @param clientThread 
+     */
     public void setClientThread(Client clientThread) {
         this.clientThread = clientThread;
     }
 
+    /**
+     * Método ?
+     * @param data 
+     */
     public void searchDone(String[][] data) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

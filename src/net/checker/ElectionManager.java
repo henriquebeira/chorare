@@ -17,7 +17,8 @@ import net.client.Client;
 import net.tracker.Tracker;
 
 /**
- *
+ * Classe para o gerenciamento de uma eleição.
+ * 
  * @author Henriques
  */
 public class ElectionManager extends Thread {
@@ -28,16 +29,24 @@ public class ElectionManager extends Thread {
     private Long startTime;
     private String caminhoDoDiretorio;
 
+    /**
+     * Construtora da classe.
+     * 
+     * @param check Recebe o StatusChecker de um Processo.
+     */
     public ElectionManager(StatusChecker check) {
         this.votacao = new ArrayList<>();
         checker = check;
     }
 
+    /**
+     * Método para indicar o fim de uma eleição.
+     * 
+     * @return True se há 4 ou mais Processos para a eleição, ou após 10 segundos com 2 Processos.
+     */
     private boolean endElection() {
         if (votacao.size() >= 4) {
-//            if (Calendar.getInstance().getTimeInMillis() - startTime > 5000) {
             return true;
-//            }
         }
 
         if (Calendar.getInstance().getTimeInMillis() - startTime > 10000) {
@@ -49,6 +58,10 @@ public class ElectionManager extends Thread {
         return false;
     }
 
+    /**
+     * Método que realiza a eleição, recebendo os votos, definindo o Tracker e os demais Processos (Clientes).
+     * TODO?
+     */
     @Override
     public void run() {
         MulticastSocket socket = null;
@@ -87,24 +100,15 @@ public class ElectionManager extends Thread {
 
             checker.setWaitingMoreParticipants(false);
 
-            // Eleição do tracker
+            // Imprime qual Processo será o Tracker
             Voto vencedor = quemVenceu();
             System.out.println("Vencedor " + vencedor.getPorta() + " - " + vencedor.getVoto());
 
             // Prepara o vencedor para receber lista de outros peers
             if (vencedor.getPorta() == numeroPortaPasta) { // Se este processo for o vencedor
-                // Inicializa o tracker
-                //Thread thread_recebe_lista = new Thread(new TCP_Recebe_Lista(caminhoDoDiretorio, numeroPortaPasta));
-                //thread_recebe_lista.start();
-                try {
                     Tracker trackerThread = new Tracker(checker.getMain());
-
                     checker.getMain().setAmITracker(true);
-
                     trackerThread.start();
-                } catch (IOException ex) {
-
-                }
             }
 
             Client clientThread = new Client(checker.getMain());
@@ -124,6 +128,11 @@ public class ElectionManager extends Thread {
         }
     }
 
+    /**
+     * Método para definir o vencedor da eleição.
+     * 
+     * @return Processo vencedor, que tem o maior voto.
+     */
     public Voto quemVenceu() {
         Voto peerVencedor = new Voto(0, 0);
         for (int i = 0; i < votacao.size(); i++) {
