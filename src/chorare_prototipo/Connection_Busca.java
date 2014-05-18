@@ -29,6 +29,7 @@ class Connection_Busca extends Thread {
     private String caminhoDaPasta, numeroPortaPasta;
     private boolean achou = false;
     private GeradorAssinatura geradorAssinatura;
+    private Janela janela;
 
     /**
      * Construtora da classe. Instância da classe GeradorAssinatura, para assinar o
@@ -38,7 +39,7 @@ class Connection_Busca extends Thread {
      * @param caminho caminho raíz do diretório.
      * @param diretorio identificação do diretório que é o Tracker.
      */
-    public Connection_Busca(Socket aClientSocket, String caminho, String diretorio) {
+    public Connection_Busca(Socket aClientSocket, String caminho, String diretorio, Janela jan) {
         try {
             clientSocket = aClientSocket;
             this.caminhoDaPasta = caminho;
@@ -46,6 +47,7 @@ class Connection_Busca extends Thread {
             in = new DataInputStream(clientSocket.getInputStream());
             out = new DataOutputStream(clientSocket.getOutputStream());
             geradorAssinatura = new GeradorAssinatura(caminhoDaPasta + numeroPortaPasta);
+            janela = jan;
             this.start();
         } catch (IOException e) {
             System.out.println("Connection:" + e.getMessage());
@@ -64,17 +66,17 @@ class Connection_Busca extends Thread {
             // Espera por dados...
             String requerente = in.readUTF();
             String nomeArquivo = in.readUTF();
-            System.out.println("\n Connection_Busca recebeu: " + nomeArquivo);
+            janela.setjLog("\n Connection_Busca recebeu: " + nomeArquivo);
             BufferedReader br = new BufferedReader(new FileReader(caminhoDaPasta + numeroPortaPasta + File.separator + "controle"+File.separator+"lista.txt"));
 
             while (br.ready()) {
                 String linha = br.readLine();
                 String[] parts = linha.split(";");
                 if (nomeArquivo.equals(parts[1])) {
-                    System.out.println("Achou o arquivo!! ");
+                    janela.setjLog("Achou o arquivo!! ");
                     
                     if (!parts[0].equals(requerente)) {
-                        System.out.println("\n Connection_Busca respondeu quem tem o arquivo: " + parts[0]);
+                        janela.setjLog("\n Connection_Busca respondeu quem tem o arquivo: " + parts[0]);
                         out.writeUTF(parts[0]);
                         FileOutputStream fos = new FileOutputStream(caminhoDaPasta + numeroPortaPasta + File.separator + "controle"+File.separator+"quemTem.txt");
                         fos.write((parts[0]).getBytes());
@@ -97,7 +99,7 @@ class Connection_Busca extends Thread {
                         break;
                         
                     }else{
-                        System.out.println("O arquivo pertence ao requerente.");
+                        janela.setjLog("O arquivo pertence ao requerente.");
                     }
                 }
             }

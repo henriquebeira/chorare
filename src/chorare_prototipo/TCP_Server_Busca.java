@@ -19,6 +19,7 @@ public class TCP_Server_Busca implements Runnable{
     private final int numeroPortaPasta;
     private final String caminhoDaPasta;
     private final GeradorAssinatura gerarParChaves;
+    private Janela janela;
 
     /**
      * Construtora da classe. Geração do par de chaves privada e pública.
@@ -26,10 +27,11 @@ public class TCP_Server_Busca implements Runnable{
      * @param caminhoDaPasta
      * @param porta 
      */
-    TCP_Server_Busca(String caminhoDaPasta, int porta) {
+    TCP_Server_Busca(String caminhoDaPasta, int porta, Janela jan) {
         this.caminhoDaPasta = caminhoDaPasta;
         this.numeroPortaPasta = porta;
         gerarParChaves = new GeradorAssinatura(caminhoDaPasta+File.separator+numeroPortaPasta);
+        janela = jan;
     }
 
     /**
@@ -44,7 +46,7 @@ public class TCP_Server_Busca implements Runnable{
             gerarParChaves.gerar();
             while (true) {
                 Socket clientSocket = listenSocket.accept();
-                Connection_Busca c = new Connection_Busca(clientSocket, caminhoDaPasta, Integer.toString(numeroPortaPasta));
+                Connection_Busca c = new Connection_Busca(clientSocket, caminhoDaPasta, Integer.toString(numeroPortaPasta), janela);
             }
         } catch (IOException e) {
             System.out.println("Listen socket TCP_Server_Busca:" + e.getMessage());

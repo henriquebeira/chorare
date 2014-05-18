@@ -14,6 +14,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.tree.DefaultTreeModel;
 
 /**
  * Classe que basicamente recebe as mensagens multicast.
@@ -27,6 +28,7 @@ public class RecebeMulticast implements Runnable{
     private final int numeroPortaPasta;
     private final ArrayList<Voto> votacao;
     private final String caminhoDoDiretorio;
+    private Janela janela;
 
     /**
      * Construtora da classe, preparando a eleição posteriormente feita.
@@ -34,10 +36,13 @@ public class RecebeMulticast implements Runnable{
      * @param numPorta Identificação do Processo, que também é a identificação da pasta.
      * @param caminhoDaPasta Caminho raíz de todos os Processos.
      */
-    RecebeMulticast(int numPorta, String caminhoDaPasta) {
+    RecebeMulticast(int numPorta, String caminhoDaPasta, Janela janela) {
         this.votacao = new ArrayList<>();
         numeroPortaPasta = numPorta;
         this.caminhoDoDiretorio = caminhoDaPasta;
+        this.janela = janela;
+        janela.setTitle(String.valueOf(numPorta));
+        janela.bloqueioBotaoBusca(false);
     }
     
     /**
@@ -57,7 +62,7 @@ public class RecebeMulticast implements Runnable{
                 byte[] buffer = new byte[1000];
                 DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
                 socket.receive(messageIn);
-                System.out.println("Porta "+numeroPortaPasta+" recebeu: " + new String(messageIn.getData()));
+                janela.setjLog("Porta "+numeroPortaPasta+" recebeu: " + new String(messageIn.getData()));
                 
                 //A mensagem recebida é armazenada em Voto
                 String mensagem = new String(messageIn.getData());
@@ -69,30 +74,31 @@ public class RecebeMulticast implements Runnable{
             
             // Eleição do tracker
             Voto vencedor = quemVenceu();
-            System.out.println("Vencedor "+vencedor.getPorta()+" - "+vencedor.getVoto());
+            janela.setjLog("Vencedor "+vencedor.getPorta()+" - "+vencedor.getVoto());
             
             // Prepara o vencedor para receber lista de outros peers
             if (vencedor.getPorta() == numeroPortaPasta){
+                janela.setTitle(janela.getTitle() + " - Tracker");
                 Thread thread_recebe_lista = new Thread(new TCP_Recebe_Lista(caminhoDoDiretorio, numeroPortaPasta));
                 thread_recebe_lista.start();
             }
             
             // Todos os peers enviam seus arquivos para o tracker
             Thread.sleep(10000);
-            Thread thread4 = new Thread(new TCP_Envia_Lista(caminhoDoDiretorio, vencedor.getPorta(), numeroPortaPasta));
+            Thread thread4 = new Thread(new TCP_Envia_Lista(caminhoDoDiretorio, vencedor.getPorta(), numeroPortaPasta, janela));
             thread4.start();
             
             // Preparar tracker para responder requisições de quem tem um determinado arquivo
             if (vencedor.getPorta() == numeroPortaPasta) {
-                System.out.println("Iniciar TCP_Server_Busca");
-                Thread thread5 = new Thread(new TCP_Server_Busca(caminhoDoDiretorio, numeroPortaPasta));
+                janela.setjLog("Iniciar TCP_Server_Busca");
+                Thread thread5 = new Thread(new TCP_Server_Busca(caminhoDoDiretorio, numeroPortaPasta, janela));
                 thread5.start();
             }
             
             // Preparar peers para realizar requisições
             Thread.sleep(5000);
-            System.out.println("Iniciar TCP_Client_Busca");
-            Thread thread5 = new Thread(new TCP_Client_Busca(caminhoDoDiretorio, vencedor.getPorta(), numeroPortaPasta));
+            janela.setjLog("Iniciar TCP_Client_Busca");
+            Thread thread5 = new Thread(new TCP_Client_Busca(caminhoDoDiretorio, vencedor.getPorta(), numeroPortaPasta, janela));
             thread5.start();
             
         } catch (SocketException e) {

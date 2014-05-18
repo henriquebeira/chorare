@@ -24,8 +24,10 @@ public class Processo2 {
     public static void main(String args[]) throws InterruptedException {
         String caminhoRaiz = "C:"+File.separator+"arquivos_chorare"+File.separator;
         //String caminhoRaiz = "/home/todos/alunos/ct/a1156462/"+"arquivos_chorare"+File.separator;
+        Janela janela = new Janela();
+        janela.setVisible(true);
         Thread thread1 = new Thread(new EnvioMulticast(10000, 8020));
-        Thread thread2 = new Thread(new RecebeMulticast(8020, caminhoRaiz));
+        Thread thread2 = new Thread(new RecebeMulticast(8020, caminhoRaiz, janela));
         thread1.start();
         thread2.start();
                 

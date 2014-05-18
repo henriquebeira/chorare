@@ -19,6 +19,7 @@ public class TCP_Envia_Lista implements Runnable {
 
     private final int portaVencedora, numeroDesteProcesso;
     private final String caminhoDoDiretorio;
+    private final Janela janela;
 
     /**
      * Construtora da classe.
@@ -27,10 +28,11 @@ public class TCP_Envia_Lista implements Runnable {
      * @param portaVencedora Porta do Processo que atua como Tracker.
      * @param estaPorta Identificação do Processo.
      */
-    TCP_Envia_Lista(String caminhoDaPasta, int portaVencedora, int estaPorta) {
+    TCP_Envia_Lista(String caminhoDaPasta, int portaVencedora, int estaPorta, Janela jan) {
         this.caminhoDoDiretorio = caminhoDaPasta;
         this.portaVencedora = portaVencedora;
         this.numeroDesteProcesso = estaPorta;
+        janela = jan;
     }
 
     /**
@@ -58,6 +60,7 @@ public class TCP_Envia_Lista implements Runnable {
                 {
                     out.writeUTF(numeroDesteProcesso + ";" + file.getName() + ";");
                     System.out.println(numeroDesteProcesso + " respondeu que tem os arquivos: " + file.getName());
+                    janela.setjAreaArquivos(file.getName());
                 }
             }
             out.close();

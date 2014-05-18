@@ -23,8 +23,10 @@ import java.util.logging.Logger;
 public class TCP_Client_Busca implements Runnable {
 
     private final int portaServidor, portaCliente;
-    private String caminhoDoDiretorio;
-    private VerificadorAssinatura verificadorAssinatura;
+    private final String caminhoDoDiretorio;
+    private final VerificadorAssinatura verificadorAssinatura;
+    private final Janela janela;
+    private boolean done = false;
     
     /**
      * Construtora da classe. Preparação do verificador de assinaturas feitas pelo Tracker.
@@ -33,12 +35,12 @@ public class TCP_Client_Busca implements Runnable {
      * @param portaServidor Porta do Tracker.
      * @param portaCliente Porta do peer.
      */
-    TCP_Client_Busca(String caminhoDoDiretorio, int portaServidor, int portaCliente) {
+    TCP_Client_Busca(String caminhoDoDiretorio, int portaServidor, int portaCliente, Janela jan) {
         this.caminhoDoDiretorio = caminhoDoDiretorio;
         this.portaServidor = portaServidor;
         this.portaCliente = portaCliente;
         verificadorAssinatura = new VerificadorAssinatura(caminhoDoDiretorio+ portaCliente);
-        
+        janela = jan;
     }
 
     /**
@@ -55,7 +57,7 @@ public class TCP_Client_Busca implements Runnable {
         Socket socket = null;
         try {
             int serverPort = portaServidor + 2;
-            System.out.print("Porta Servidor Busca: " + serverPort + "\n");
+            janela.setjLog("Porta Servidor Busca: " + serverPort + "\n");
             
             // Recebimento da chave pública do Tracker
             if (portaCliente != portaServidor) {
@@ -72,10 +74,16 @@ public class TCP_Client_Busca implements Runnable {
                 DataInputStream in = new DataInputStream(socket.getInputStream());
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
 
+                janela.setjLog("\n Digite o nome do arquivo desejado... ");
+                janela.bloqueioBotaoBusca(true);
+                while (!done) {
+                    if (janela.getjBotaoBusca().isSelected()) {
+                        done = true;  // ends loop
+                    }
+                }
                 Scanner entrada = new Scanner(System.in);
-                System.out.print("\n Digite o nome do arquivo desejado: ");
                 String arquivodesejado = entrada.nextLine();
-                System.out.println("O nome digitado foi: " + arquivodesejado);
+                janela.setjLog("O nome digitado foi: " + arquivodesejado);
                 out.writeUTF(String.valueOf(portaCliente));
                 out.writeUTF(arquivodesejado);      	// Faz requisição do arquivo...
 
