@@ -27,11 +27,11 @@ public class TCP_Server_Busca implements Runnable{
      * @param caminhoDaPasta
      * @param porta 
      */
-    TCP_Server_Busca(String caminhoDaPasta, int porta, Janela jan) {
+    TCP_Server_Busca(String caminhoDaPasta, int porta, Janela janela) {
         this.caminhoDaPasta = caminhoDaPasta;
         this.numeroPortaPasta = porta;
         gerarParChaves = new GeradorAssinatura(caminhoDaPasta+File.separator+numeroPortaPasta);
-        janela = jan;
+        this.janela = janela;
     }
 
     /**

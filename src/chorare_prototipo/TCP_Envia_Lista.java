@@ -28,11 +28,11 @@ public class TCP_Envia_Lista implements Runnable {
      * @param portaVencedora Porta do Processo que atua como Tracker.
      * @param estaPorta Identificação do Processo.
      */
-    TCP_Envia_Lista(String caminhoDaPasta, int portaVencedora, int estaPorta, Janela jan) {
+    TCP_Envia_Lista(String caminhoDaPasta, int portaVencedora, int estaPorta, Janela janela) {
         this.caminhoDoDiretorio = caminhoDaPasta;
         this.portaVencedora = portaVencedora;
         this.numeroDesteProcesso = estaPorta;
-        janela = jan;
+        this.janela = janela;
     }
 
     /**

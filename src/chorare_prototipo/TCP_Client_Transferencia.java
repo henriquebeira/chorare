@@ -18,6 +18,7 @@ public class TCP_Client_Transferencia implements Runnable {
 
     private final int portaServidor, portaCliente;
     private final String arquivodesejado, caminhoDoDiretorio;
+    private final Janela janela;
 
     /**
      * Construtora da classe. 
@@ -27,11 +28,12 @@ public class TCP_Client_Transferencia implements Runnable {
      * @param portaCliente Porta do peer que irá receber o arquivo solicitado.
      * @param arquivodesejado Nome do arquivo a ser transferido.
      */
-    TCP_Client_Transferencia(String caminhoDoDiretorio, int portaServidor, int portaCliente, String arquivodesejado) {
+    TCP_Client_Transferencia(String caminhoDoDiretorio, int portaServidor, int portaCliente, String arquivodesejado, Janela janela) {
         this.caminhoDoDiretorio = caminhoDoDiretorio;
         this.portaServidor = portaServidor;
         this.portaCliente = portaCliente;
         this.arquivodesejado = arquivodesejado;
+        this.janela = janela;
     }
 
     /**
@@ -51,7 +53,6 @@ public class TCP_Client_Transferencia implements Runnable {
             out.writeUTF(arquivodesejado);      	// Faz requisição do arquivo...
             
             String nomeDoArquivo = in.readUTF();	    //... e recebe a resposta com os dados
-            System.out.println("TCP_Client_Transferencia recebeu: " + nomeDoArquivo);
             //Se NÃO recebeu --1, baixe o arquivo
             if (!nomeDoArquivo.equals("--1")) {
                 FileOutputStream fos;
@@ -59,6 +60,7 @@ public class TCP_Client_Transferencia implements Runnable {
                     fos = new FileOutputStream(new File(caminhoDoDiretorio+portaCliente+ File.separator+ "controle"+File.separator+arquivodesejado));
                 } else {
                     fos = new FileOutputStream(new File(caminhoDoDiretorio+portaCliente+ File.separator+ arquivodesejado));
+                    janela.setjAreaArquivos(arquivodesejado);
                 }
                 byte[] buf = new byte[4096];
                 int i = 1;
@@ -69,6 +71,7 @@ public class TCP_Client_Transferencia implements Runnable {
                     }
                     fos.write(buf, 0, len);
                 }
+                janela.setjLog("Arquivo " + nomeDoArquivo + " transferido com sucesso!");
             }
             in.close();
             out.close();

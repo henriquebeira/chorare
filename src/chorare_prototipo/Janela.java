@@ -6,7 +6,6 @@
 
 package chorare_prototipo;
 
-import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
@@ -18,13 +17,14 @@ import javax.swing.JTextField;
  * @author Henrique
  */
 public class Janela extends javax.swing.JFrame implements ActionListener{
-    private ActionEvent evento;
 
+    private boolean clicou = false;
     /**
      * Creates new form Janela
      */
     public Janela() {
         initComponents();
+        jBotaoBusca.addActionListener(this);
     }
 
     /**
@@ -42,23 +42,31 @@ public class Janela extends javax.swing.JFrame implements ActionListener{
         jLog = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
         jAreaArquivos = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jBotaoBusca.setText("Buscar");
+        jBotaoBusca.setText("Buscar arquivo");
         jBotaoBusca.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jBotaoBuscaMouseClicked(evt);
             }
         });
 
+        jLog.setEditable(false);
         jLog.setColumns(20);
         jLog.setRows(5);
         jScrollPane2.setViewportView(jLog);
 
+        jAreaArquivos.setEditable(false);
         jAreaArquivos.setColumns(20);
         jAreaArquivos.setRows(5);
         jScrollPane3.setViewportView(jAreaArquivos);
+
+        jLabel1.setText("Meus arquivos");
+
+        jLabel2.setText("Log");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -66,15 +74,21 @@ public class Janela extends javax.swing.JFrame implements ActionListener{
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jCampoBusca)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jScrollPane2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jCampoBusca, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(jBotaoBusca)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 324, Short.MAX_VALUE))
+                        .addGap(299, 299, 299))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(115, 115, 115)
+                        .addComponent(jLabel2)
+                        .addGap(27, 27, 27)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -85,17 +99,21 @@ public class Janela extends javax.swing.JFrame implements ActionListener{
                     .addComponent(jCampoBusca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jBotaoBusca))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void jBotaoBuscaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jBotaoBuscaMouseClicked
-        // TODO add your handling code here:
+        // Ignorar.
     }//GEN-LAST:event_jBotaoBuscaMouseClicked
 
     /**
@@ -137,41 +155,33 @@ public class Janela extends javax.swing.JFrame implements ActionListener{
         return jCampoBusca.getText();
     }
 
-    public void setjCampoBusca(JTextField jCampoBusca) {
-        this.jCampoBusca = jCampoBusca;
-    }
-
-    public JTextArea getjLog() {
-        return jLog;
-    }
-
     public void setjLog(String texto) {
         jLog.setText(jLog.getText() + "\n" + texto);
-    }
-
-    public JTextArea getjAreaArquivos() {
-        return jAreaArquivos;
     }
 
     public void setjAreaArquivos(String texto) {
         jAreaArquivos.setText(jAreaArquivos.getText() + "\n" + texto);
     }
 
-    public JButton getjBotaoBusca() {
-        return jBotaoBusca;
-    }
-
     public void bloqueioBotaoBusca(boolean chave) {
         jBotaoBusca.setVisible(chave);
     }
 
-    
-    
+    public boolean isClicou() {
+        return clicou;
+    }
 
+    public void setClicou(boolean clicou) {
+        this.clicou = clicou;
+    }
+
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea jAreaArquivos;
     private javax.swing.JButton jBotaoBusca;
     private javax.swing.JTextField jCampoBusca;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JTextArea jLog;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -179,13 +189,8 @@ public class Janela extends javax.swing.JFrame implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        evento = e;
-        if (e.getSource() == jBotaoBusca) {
-            
-        }
+        System.out.println("Clicou! "+isClicou());
+        setClicou(true);
     }
     
-    public ActionEvent getEvento(){
-        return evento;
-    }
 }

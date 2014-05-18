@@ -26,7 +26,6 @@ public class TCP_Client_Busca implements Runnable {
     private final String caminhoDoDiretorio;
     private final VerificadorAssinatura verificadorAssinatura;
     private final Janela janela;
-    private boolean done = false;
     
     /**
      * Construtora da classe. Preparação do verificador de assinaturas feitas pelo Tracker.
@@ -65,7 +64,7 @@ public class TCP_Client_Busca implements Runnable {
                 thread3.start();
 
                 Thread.sleep(3000);
-                Thread thread4 = new Thread(new TCP_Client_Transferencia(caminhoDoDiretorio, portaServidor, portaCliente, "public_key"));
+                Thread thread4 = new Thread(new TCP_Client_Transferencia(caminhoDoDiretorio, portaServidor, portaCliente, "public_key", janela));
                 thread4.start();
             }
 
@@ -76,19 +75,16 @@ public class TCP_Client_Busca implements Runnable {
 
                 janela.setjLog("\n Digite o nome do arquivo desejado... ");
                 janela.bloqueioBotaoBusca(true);
-                while (!done) {
-                    if (janela.getjBotaoBusca().isSelected()) {
-                        done = true;  // ends loop
-                    }
+                while (janela.isClicou() == false) {
+                    Thread.sleep(1000);
                 }
-                Scanner entrada = new Scanner(System.in);
-                String arquivodesejado = entrada.nextLine();
+                String arquivodesejado = janela.getjCampoBusca(); 
                 janela.setjLog("O nome digitado foi: " + arquivodesejado);
                 out.writeUTF(String.valueOf(portaCliente));
                 out.writeUTF(arquivodesejado);      	// Faz requisição do arquivo...
 
                 String quemTem = in.readUTF();	    //... e recebe qual processo tem o arquivo desejado
-                System.out.println("TCP_Client_Busca recebeu quem tem: " + quemTem);
+                janela.setjLog("Quem tem o arquivo? " + quemTem);
                 //Se NÃO recebeu --1, baixe o arquivo
                 if (!quemTem.equals("--1")) {
                     // Recebe o arquivo quemTem.txt, caso o requisitante não seja o próprio Processo que está atuando como Tracker
@@ -111,41 +107,42 @@ public class TCP_Client_Busca implements Runnable {
                     // Recebimento da assinatura do arquivo quemTem.txt, caso o requisitante não seja o próprio Processo que está atuando como Tracker
                     Thread.sleep(5000);
                     if (portaCliente != portaServidor) {
-                        System.out.println("Buscar assinatura...");
+                        janela.setjLog("Buscar assinatura...");
                         Thread thread3 = new Thread(new TCP_Server_Transferencia(caminhoDoDiretorio, portaServidor));
                         thread3.start();
 
                         Thread.sleep(3000);
-                        Thread thread4 = new Thread(new TCP_Client_Transferencia(caminhoDoDiretorio, portaServidor, portaCliente, "assinatura"));
+                        Thread thread4 = new Thread(new TCP_Client_Transferencia(caminhoDoDiretorio, portaServidor, portaCliente, "assinatura", janela));
                         thread4.start();
                     }
                     
                     // Se a assinatura foi realmente feita pelo Tracker, efetivar a transferência do arquivo requisitado.
                     Thread.sleep(5000);
                     if (verificadorAssinatura.verificar() == true) {
-                        System.out.println("Assinatura válida!!! ");
+                        janela.setjLog("Assinatura válida!!! ");
                         // Abrir e recuperar o Processo que tem o arquivo desejado
                         Scanner sc = new Scanner(new File(caminhoDoDiretorio + portaCliente + File.separator + "controle" + File.separator + "quemTem.txt"));
                         String numeroProcesso = sc.nextLine();
-                        System.out.println("TCP_Client_Busca conecta com o Processo: " + numeroProcesso);
+                        janela.setjLog("Conectar ao Processo: " + numeroProcesso);
 
                         // Recebe o diretório/processo que tem o arquivo solicitado, e prepara transferência
                         Thread thread3 = new Thread(new TCP_Server_Transferencia(caminhoDoDiretorio, Integer.parseInt(numeroProcesso)));
                         thread3.start();
 
                         Thread.sleep(3000);
-                        Thread thread4 = new Thread(new TCP_Client_Transferencia(caminhoDoDiretorio, Integer.parseInt(numeroProcesso), portaCliente, arquivodesejado));
+                        Thread thread4 = new Thread(new TCP_Client_Transferencia(caminhoDoDiretorio, Integer.parseInt(numeroProcesso), portaCliente, arquivodesejado, janela));
                         thread4.start();
                     } else {
-                        System.out.println("Assinatura inválida! ");
+                        janela.setjLog("Assinatura inválida! ");
                     }
 
                 } else {
-                    System.out.println("Arquivo não existe ou já está no diretório");
+                    janela.setjLog("Arquivo não existe ou já está no diretório");
                 }
                 in.close();
                 out.close();
                 socket.close();
+                janela.setClicou(false);
             }
 
         } catch (UnknownHostException e) {

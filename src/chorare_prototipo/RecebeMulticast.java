@@ -14,7 +14,6 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.tree.DefaultTreeModel;
 
 /**
  * Classe que basicamente recebe as mensagens multicast.
@@ -28,7 +27,7 @@ public class RecebeMulticast implements Runnable{
     private final int numeroPortaPasta;
     private final ArrayList<Voto> votacao;
     private final String caminhoDoDiretorio;
-    private Janela janela;
+    private final Janela janela;
 
     /**
      * Construtora da classe, preparando a eleição posteriormente feita.
@@ -90,14 +89,12 @@ public class RecebeMulticast implements Runnable{
             
             // Preparar tracker para responder requisições de quem tem um determinado arquivo
             if (vencedor.getPorta() == numeroPortaPasta) {
-                janela.setjLog("Iniciar TCP_Server_Busca");
                 Thread thread5 = new Thread(new TCP_Server_Busca(caminhoDoDiretorio, numeroPortaPasta, janela));
                 thread5.start();
             }
             
             // Preparar peers para realizar requisições
             Thread.sleep(5000);
-            janela.setjLog("Iniciar TCP_Client_Busca");
             Thread thread5 = new Thread(new TCP_Client_Busca(caminhoDoDiretorio, vencedor.getPorta(), numeroPortaPasta, janela));
             thread5.start();
             

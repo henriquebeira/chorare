@@ -66,17 +66,17 @@ class Connection_Busca extends Thread {
             // Espera por dados...
             String requerente = in.readUTF();
             String nomeArquivo = in.readUTF();
-            janela.setjLog("\n Connection_Busca recebeu: " + nomeArquivo);
+            janela.setjLog(requerente + " busca o arquivo: " + nomeArquivo);
             BufferedReader br = new BufferedReader(new FileReader(caminhoDaPasta + numeroPortaPasta + File.separator + "controle"+File.separator+"lista.txt"));
 
             while (br.ready()) {
                 String linha = br.readLine();
                 String[] parts = linha.split(";");
                 if (nomeArquivo.equals(parts[1])) {
-                    janela.setjLog("Achou o arquivo!! ");
+                    janela.setjLog("Arquivo encontrado! ");
                     
                     if (!parts[0].equals(requerente)) {
-                        janela.setjLog("\n Connection_Busca respondeu quem tem o arquivo: " + parts[0]);
+                        janela.setjLog("Quem tem o arquivo: " + parts[0]);
                         out.writeUTF(parts[0]);
                         FileOutputStream fos = new FileOutputStream(caminhoDaPasta + numeroPortaPasta + File.separator + "controle"+File.separator+"quemTem.txt");
                         fos.write((parts[0]).getBytes());
@@ -99,7 +99,7 @@ class Connection_Busca extends Thread {
                         break;
                         
                     }else{
-                        janela.setjLog("O arquivo pertence ao requerente.");
+                        janela.setjLog("O arquivo já pertence ao requerente.");
                     }
                 }
             }

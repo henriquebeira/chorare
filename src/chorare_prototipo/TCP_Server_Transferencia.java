@@ -37,7 +37,7 @@ public class TCP_Server_Transferencia implements Runnable{
     public void run() {
         try {
             int serverPort = portaServidor+4; 
-            System.out.println("TCP_Server_Transferencia: "+serverPort);
+            System.out.println("Porta para transferências: "+serverPort);
             String caminhoCompletoDiretorio = caminhoDoDiretorio+portaServidor;
             ServerSocket listenSocket = new ServerSocket(serverPort);
             while (true) {
