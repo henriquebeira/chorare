@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package chorare_pacote;
+package chorare_prototipo;
 
 /**
  * Classe que faz o recebimento efetivo dos arquivos transferidos.
@@ -45,9 +45,9 @@ public class TCP_Client_Transferencia implements Runnable {
         try {
             // Conectar com o Processo que tem o arquivo solicitado, pela porta de final 4, e.g. 8014 (quando o peer é 8010)
             int serverPort = portaServidor+4;
-            socket = new Socket("localhost", serverPort); // Abre conexão com o peer desejado
-            DataInputStream in = new DataInputStream(socket.getInputStream()); // Pega o stream de entrada
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream()); // Pega o stream de saída
+            socket = new Socket("localhost", serverPort);
+            DataInputStream in = new DataInputStream(socket.getInputStream());
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             out.writeUTF(arquivodesejado);      	// Faz requisição do arquivo...
             
             String nomeDoArquivo = in.readUTF();	    //... e recebe a resposta com os dados
@@ -55,9 +55,9 @@ public class TCP_Client_Transferencia implements Runnable {
             //Se NÃO recebeu --1, baixe o arquivo
             if (!nomeDoArquivo.equals("--1")) {
                 FileOutputStream fos;
-                if (nomeDoArquivo.equals("public_key")||nomeDoArquivo.equals("assinatura")) { // se for um dos arquivos de controle / requisição para o tracker
+                if (nomeDoArquivo.equals("public_key")||nomeDoArquivo.equals("assinatura")) {
                     fos = new FileOutputStream(new File(caminhoDoDiretorio+portaCliente+ File.separator+ "controle"+File.separator+arquivodesejado));
-                } else { // se for uma requisição para um arquivo comum de outro peer
+                } else {
                     fos = new FileOutputStream(new File(caminhoDoDiretorio+portaCliente+ File.separator+ arquivodesejado));
                 }
                 byte[] buf = new byte[4096];
@@ -91,3 +91,4 @@ public class TCP_Client_Transferencia implements Runnable {
         }
     }
 }
+

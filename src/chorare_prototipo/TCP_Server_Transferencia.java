@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package chorare_pacote;
+package chorare_prototipo;
 
 /**
  * Classe que o Processo/Peer utiliza para ser a parte servidora da transferência de um arquivo que possui.

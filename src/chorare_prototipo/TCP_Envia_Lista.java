@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package chorare_pacote;
+package chorare_prototipo;
 
 /**
  * Classe para envio dos arquivos que possui para o Tracker.

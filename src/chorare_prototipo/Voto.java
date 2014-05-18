@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package chorare_pacote;
+package chorare_prototipo;
 
 /**
  * Classe utilizada para guardar os votos da eleição para Tracker.
@@ -13,8 +13,7 @@ package chorare_pacote;
  */
 
 public class Voto {
-    private int voto;
-    private String nick;
+    private int porta, voto;
 
     /**
      * Construtora da classe.
@@ -22,17 +21,17 @@ public class Voto {
      * @param porta Porta/Identificação do Processo.
      * @param voto Número que representa o voto do Processo.
      */
-    public Voto(String porta, int voto) {
-        this.nick = porta;
+    public Voto(int porta, int voto) {
+        this.porta = porta;
         this.voto = voto;
     }
 
-    public String getNick() {
-        return nick;
+    public int getPorta() {
+        return porta;
     }
 
-    public void setNick(String porta) {
-        this.nick = porta;
+    public void setPorta(int porta) {
+        this.porta = porta;
     }
 
     public int getVoto() {

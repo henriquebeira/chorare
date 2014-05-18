@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package chorare_pacote;
+package chorare_prototipo;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

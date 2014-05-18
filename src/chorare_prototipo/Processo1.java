@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package chorare_pacote;
+package chorare_prototipo;
 
 import java.io.File;
 
@@ -23,7 +23,7 @@ public class Processo1 {
      */
     public static void main(String args[]) throws InterruptedException {
         String caminhoRaiz = "C:"+File.separator+"arquivos_chorare"+File.separator;
-        //String caminhoDaPasta = "/home/todos/alunos/ct/a1155997/"+"arquivos_chorare"+File.separator;
+        //String caminhoRaiz = "/home/todos/alunos/ct/a1156462/"+"arquivos_chorare"+File.separator;
         Thread thread1 = new Thread(new EnvioMulticast(10000, 8010));
         Thread thread2 = new Thread(new RecebeMulticast(8010, caminhoRaiz));
         thread1.start();

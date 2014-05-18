@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package chorare_pacote;
+package chorare_prototipo;
 
 /**
  * Classe que o Tracker usa para iniciar a conexão que receberá as requisições de busca dos peers.
