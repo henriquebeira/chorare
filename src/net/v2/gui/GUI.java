@@ -6,17 +6,19 @@ package net.v2.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,7 +27,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
 import net.v2.start.Main;
 import org.jdesktop.swingx.JXBusyLabel;
 import org.jdesktop.swingx.JXTable;
@@ -36,7 +40,7 @@ import org.jdesktop.swingx.JXTable;
  */
 public class GUI extends JFrame implements WindowListener {
 
-    private Main main;
+    private final Main main;
     private JPanel waiting;
     private JPanel running;
     public final static Byte MODE_WAIT = 1;
@@ -47,13 +51,13 @@ public class GUI extends JFrame implements WindowListener {
     private JTextField searchArea;
     private JXTable table;
 
-    public GUI(Main main) {
+    public GUI(Main mainR) {
         setLayout(new BorderLayout());
-        setTitle(main.getNickName());
+        setTitle(mainR.getNickName());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(500, 400);
 
-        this.main = main;
+        this.main = mainR;
 
         waiting = new JPanel(new BorderLayout());
 
@@ -93,16 +97,55 @@ public class GUI extends JFrame implements WindowListener {
 
         inerTabPanel = new JTabbedPane(JTabbedPane.LEFT);
 
+        JPanel generalP = new JPanel(new BorderLayout());
 
+        table = new JXTable(new Object[0][1], new String[]{"Nome Arquivo"});
+        table.setEditable(false);
+
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent me) {
+                if (me.getClickCount() == 2) {
+                    me.consume();
+
+                    Component comp = (Component) me.getSource();
+
+                    while (!(comp instanceof JXTable) && comp != null) {
+                        comp = comp.getParent();
+                    }
+
+                    if (comp != null) {
+                        JXTable table = (JXTable) comp;
+
+                        int selectedRow = table.getSelectedRow();
+                        try {
+                            Desktop.getDesktop().open(new File(main.getFilesFolder() + File.separator + table.getValueAt(selectedRow, 0)));
+                        } catch (IOException ex) {
+                        }
+                    }
+                }
+            }
+        });
+
+        updateTable();
+
+        generalP.add(
+                new JScrollPane(table));
+
+        inerTabPanel.addTab(
+                "Arquivos", generalP);
+
+        tabPanel.addTab(
+                "Local", inerTabPanel);
 
         running.add(tabPanel);
 
-        //TEst
-        running.setBackground(Color.yellow);
-
+//        //TEst
+//        running.setBackground(Color.yellow);
         changeModeAwaiting();
 
-        this.setVisible(true);
+        this.setVisible(
+                true);
     }
 
     public void updateState(Byte mode) {
@@ -179,16 +222,45 @@ public class GUI extends JFrame implements WindowListener {
         } else {
             JXTable table = new JXTable(data, new String[]{"Nome Arquivo", "NickName", "IP do Peer", "Peer Port"});
             table.setColumnControlVisible(true);
+            table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+            table.setEditable(false);
+
             JScrollPane sP = new JScrollPane(table);
+
+            table.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent me) {
+                    if (me.getClickCount() == 2) {
+                        me.consume();
+
+                        Component comp = (Component) me.getSource();
+
+                        while (!(comp instanceof JXTable) && comp != null) {
+                            comp = comp.getParent();
+                        }
+
+                        if (comp != null) {
+                            JXTable table = (JXTable) comp;
+
+                            int selectedRow = table.getSelectedRow();
+
+                            makeDownload(table.getValueAt(selectedRow, 1).toString(),
+                                    table.getValueAt(selectedRow, 2).toString(),
+                                    (Integer) table.getValueAt(selectedRow, 3),
+                                    table.getValueAt(selectedRow, 0).toString());
+                        }
+                    }
+                }
+            });
 
             panel.add(sP);
         }
-        
-        tabPanel.addTab(searched,panel);
+
+        tabPanel.addTab(searched, panel);
     }
 
-    private void makeDownload(String peerIP, Integer peerPort, String file) {
-        main.getClient().requestFileFromPeer(peerIP, peerPort, file);
+    private void makeDownload(String peerNick, String peerIP, Integer peerPort, String file) {
+        main.getClient().requestFileFromPeer(peerNick, peerIP, peerPort, file);
     }
 
     public void warnCompletedDownload(String file, String peerNick, File filePath) {
@@ -205,6 +277,30 @@ public class GUI extends JFrame implements WindowListener {
                 JOptionPane.showMessageDialog(this, "Não foi possível abrir o arquiv!", "Erro", JOptionPane.WARNING_MESSAGE);
             }
         }
+
+        updateTable();
+    }
+
+    private void updateTable() {
+        File folder = main.getFilesFolder();
+
+        ArrayList<String> files = new ArrayList<>();
+
+        for (File f : folder.listFiles()) {
+            if (!f.getName().equals("controle")) {
+                files.add(f.getName());
+            }
+        }
+
+        Object[][] filesD = new Object[files.size()][1];
+
+        int k = 0;
+        for (String s : files) {
+            filesD[k++][0] = s;
+        }
+
+        table.setModel(new DefaultTableModel(filesD, new String[]{"Nome Arquivo"}));
+
     }
 
     @Override

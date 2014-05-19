@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -32,6 +33,9 @@ public class Client extends Thread {
 
             sSocket = new ServerSocket(0, 0, InetAddress.getLocalHost());
 
+            sSocket.setSoTimeout(3000);
+            
+            start();
 
         } catch (UnknownHostException ex) {
             System.err.println("Client - Host: " + ex.getMessage());
@@ -42,6 +46,19 @@ public class Client extends Thread {
 
     @Override
     public void run() {
+        while(!interrupted()){
+            try {
+                System.out.println("Waiting request");
+                Socket sReceive = sSocket.accept();
+                
+                new TransferFile(main, sReceive);
+                
+            } catch(SocketTimeoutException tEx){
+            }
+            catch (IOException ex) {
+                System.err.println("Client - IO: " + ex.getMessage());
+            }
+        }
     }
 
     public void sendFileList() {
@@ -85,8 +102,68 @@ public class Client extends Thread {
         new Search(main, search);
     }
 
-    public void requestFileFromPeer(String peerIP, Integer peerPort, String file) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void requestFileFromPeer(String peerNick, String peerIP, Integer peerPort, String file) {
+        new RequestFile(main, peerNick, peerIP, peerPort, file);
+    }
+}
+
+
+
+class RequestFile extends Thread{
+    private Main main;
+    private InetAddress ip;
+    private Integer port;
+    private String file;
+    private String nick;
+
+    public RequestFile(Main main, String peerNick, String ip, Integer port, String file) {
+        try {
+            this.main = main;
+            this.ip = InetAddress.getByName(ip);
+            this.port = port;
+            this.file = file;
+            this.nick = peerNick;
+            
+            start();
+        } catch (UnknownHostException ex) {
+        }
+    }
+
+    @Override
+    public void run() {
+        try {
+            Socket socket = new Socket(ip, port);
+            
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            DataInputStream in = new DataInputStream(socket.getInputStream());
+            
+            out.writeUTF(file);
+            
+            String fileRec = in.readUTF();
+            
+            if(!fileRec.equals("--1")){
+                FileOutputStream fOut = new FileOutputStream(main.getFilesFolder() + File.separator + fileRec);
+                
+                byte[] buff = new byte[4096];
+                
+                while(true){
+                    int len = in.read(buff);
+                    
+                    if(len == -1){
+                        break;
+                    }
+                    
+                    fOut.write(buff, 0, len);
+                }
+                
+                main.getGui().warnCompletedDownload(file, nick, new File(main.getFilesFolder() + File.separator + file));
+            }else{
+                
+            }
+            
+        } catch (IOException ex) {
+            System.err.println("Client#RequestFile - IO: " + ex.getMessage());
+        }
     }
 }
 
@@ -143,12 +220,10 @@ class Search extends Thread {
 
                 while (true) {
                     int len = sIn.read(buf);
-                    System.out.println("len " + len);
                     if (len == -1) {
-                        System.out.println("Breaking ...");
                         break;
                     }
-                    System.out.println("Reading ... ");
+                    
                     fOut.write(buf, 0, len);
 
                     auxR += len;
@@ -156,11 +231,7 @@ class Search extends Thread {
                     if(auxR >= totalRead){
                         break;
                     }
-                    
-                    System.out.println("AuxR " + auxR);
                 }
-
-                System.out.println("Done reading");
 
                 fOut.close();
 
@@ -191,12 +262,9 @@ class Search extends Thread {
 
             while (true) {
                 int len = sIn.read(buf);
-                    System.out.println("len " + len);
                     if (len == -1) {
-                        System.out.println("Breaking ...");
                         break;
                     }
-                    System.out.println("Reading ... ");
                     fOutSearch.write(buf, 0, len);
 
                     auxR += len;
@@ -220,16 +288,11 @@ class Search extends Thread {
             auxR = 0;
             totalRead = sIn.readLong();
 
-            System.out.println("Size of sign: " + totalRead);
-
             while (true) {
                 int len = sIn.read(buf);
-                    System.out.println("len " + len);
                     if (len == -1) {
-                        System.out.println("Breaking ...");
                         break;
                     }
-                    System.out.println("Reading ... ");
                     fOutSearch.write(buf, 0, len);
 
                     auxR += len;
@@ -238,8 +301,6 @@ class Search extends Thread {
                         break;
                     }
             }
-
-            System.out.println("Total Leng: " + new File(configFolder.getPath() + File.separator + incoming).length());
 
             fOutSearch.close();
 
