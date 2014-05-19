@@ -6,6 +6,7 @@ package net.v2.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -18,10 +19,13 @@ import java.io.IOException;
 import java.net.InetAddress;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import net.v2.start.Main;
 import org.jdesktop.swingx.JXBusyLabel;
 import org.jdesktop.swingx.JXTable;
@@ -30,7 +34,7 @@ import org.jdesktop.swingx.JXTable;
  *
  * @author User
  */
-public class GUI extends JFrame implements WindowListener{
+public class GUI extends JFrame implements WindowListener {
 
     private Main main;
     private JPanel waiting;
@@ -41,7 +45,6 @@ public class GUI extends JFrame implements WindowListener{
     private JTabbedPane tabPanel;
     private JTabbedPane inerTabPanel;
     private JTextField searchArea;
-    
     private JXTable table;
 
     public GUI(Main main) {
@@ -67,37 +70,36 @@ public class GUI extends JFrame implements WindowListener{
 
         running = new JPanel(new BorderLayout());
         JPanel searchPanel = new JPanel(new BorderLayout());
-        
+
         searchArea = new JTextField();
-        searchArea.setMinimumSize(new Dimension(150, (int)searchArea.getPreferredSize().getHeight()));
-        
+        searchArea.setMinimumSize(new Dimension(150, (int) searchArea.getPreferredSize().getHeight()));
+
         JButton searchButton = new JButton("Buscar");
         searchButton.addMouseListener(new MouseAdapter() {
-
             @Override
             public void mouseReleased(MouseEvent me) {
-                if(!searchArea.getText().equals("")){
+                if (!searchArea.getText().equals("")) {
                     doSearch(searchArea.getText());
                 }
             }
         });
-        
+
         searchPanel.add(searchArea);
         searchPanel.add(searchButton, BorderLayout.EAST);
-        
+
         running.add(searchPanel, BorderLayout.NORTH);
-        
+
         tabPanel = new JTabbedPane();
-        
+
         inerTabPanel = new JTabbedPane(JTabbedPane.LEFT);
-        
-        
-        
+
+
+
         running.add(tabPanel);
 
         //TEst
         running.setBackground(Color.yellow);
-        
+
         changeModeAwaiting();
 
         this.setVisible(true);
@@ -108,7 +110,7 @@ public class GUI extends JFrame implements WindowListener{
             changeModeRunning();
             return;
         }
-        
+
         if (mode == MODE_WAIT) {
             changeModeAwaiting();
         }
@@ -143,27 +145,60 @@ public class GUI extends JFrame implements WindowListener{
     public void setMode(Byte mode) {
         updateState(mode);
     }
-    
-    private void doSearch(String search){
+
+    private void doSearch(String search) {
         main.getClient().search(search);
     }
-    
-    public void receiveSearchResponse(Object[][] data){
+
+    public void receiveSearchResponse(Object[][] data, String searched) {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        JPanel NorthPanel = new JPanel(new BorderLayout());
+        NorthPanel.add(new JLabel("Buscando por: " + searched));
+
+        JButton button = new JButton(UIManager.getIcon("OptionPane.errorIcon"));
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent me) {
+                Container remove = ((JButton) me.getSource()).getParent().getParent();
+
+                tabPanel.remove(remove);
+            }
+        });
+
+        NorthPanel.add(button, BorderLayout.EAST);
+
+        panel.add(NorthPanel, BorderLayout.NORTH);
+
+        if (data.length == 0) {
+            JLabel lab = new JLabel("Nenhum resultado encontrado");
+            lab.setHorizontalAlignment(JLabel.CENTER);
+            lab.setVerticalAlignment(JLabel.CENTER);
+
+            panel.add(lab);
+        } else {
+            JXTable table = new JXTable(data, new String[]{"Nome Arquivo", "NickName", "IP do Peer", "Peer Port"});
+            table.setColumnControlVisible(true);
+            JScrollPane sP = new JScrollPane(table);
+
+            panel.add(sP);
+        }
         
+        tabPanel.addTab(searched,panel);
     }
-    
-    private void makeDownload(InetAddress peer, Integer peerPort, String file){
-        main.getClient().requestFileFromPeer(peer, peerPort, file);
+
+    private void makeDownload(String peerIP, Integer peerPort, String file) {
+        main.getClient().requestFileFromPeer(peerIP, peerPort, file);
     }
-    
-    public void warnCompletedDownload(String file, String peerNick, File filePath){
-        String[] buttons = new String[]{"Abrir o arquivo","Não abrir"};
-        
-        Integer response =  JOptionPane.showOptionDialog(this, "O download do arquivo " + file + " foi concluído.\n"
-                + "O arquivo foi transferido pelo peer: " + peerNick + ".\n Deseja abrir o arquivo?", file + " concluído.", 
+
+    public void warnCompletedDownload(String file, String peerNick, File filePath) {
+        String[] buttons = new String[]{"Abrir o arquivo", "Não abrir"};
+
+        Integer response = JOptionPane.showOptionDialog(this, "O download do arquivo " + file + " foi concluído.\n"
+                + "O arquivo foi transferido pelo peer: " + peerNick + ".\n Deseja abrir o arquivo?", file + " concluído.",
                 JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE, null, buttons, buttons[0]);
-        
-        if(response == 0){
+
+        if (response == 0) {
             try {
                 Desktop.getDesktop().open(filePath);
             } catch (IOException ex) {

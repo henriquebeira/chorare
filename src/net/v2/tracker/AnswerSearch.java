@@ -50,11 +50,13 @@ public class AnswerSearch extends Thread {
                 out.writeUTF("public-key");
                 fis = new FileInputStream(main.getTrackerFolder() + File.separator + "public-key");
                 buf = new byte[4096];
+                
+                out.writeLong(new File(main.getTrackerFolder() + File.separator + "public-key").length());
+                
                 while (true) {
                     int len = fis.read(buf);
                     if (len == -1) {
                         System.out.println("Breaking!");
-                        out.write(buf, 0, -1);
                         break;
                     }
                     System.out.println("writing ...");
@@ -82,7 +84,7 @@ public class AnswerSearch extends Thread {
                     String[] buff = sc.nextLine().split(":");
 
                     if (buff[3].contains(searchingFor)) {
-                        auxTemp.writeUTF(buff[0] + ":" + buff[3] + ":" + buff[1] + ":" + buff[2] + ":");
+                        auxTemp.writeUTF(buff[0] + ":" + buff[3] + ":" + buff[1] + ":" + buff[2] + ":\n");
                     }
                 }
 
@@ -92,9 +94,10 @@ public class AnswerSearch extends Thread {
 
                 out.writeUTF(searchingFor + "-quemTem.txt");
                 
+                out.writeLong(new File(main.getTrackerFolder() + File.separator + searchingFor + "-quemTem.txt").length());
+                
                 System.out.println("Sending list.");
 
-                out.writeUTF(main.getTrackerFolder() + File.separator + searchingFor + "-quemTem.txt");
                 fis = new FileInputStream(main.getTrackerFolder() + File.separator + searchingFor + "-quemTem.txt");
                 buf = new byte[4096];
                 while (true) {
@@ -110,9 +113,12 @@ public class AnswerSearch extends Thread {
 
                 out.writeUTF(searchingFor + "-sign");
                 
+                out.writeLong(new File(main.getTrackerFolder() + File.separator + searchingFor + "-sign").length());
+                
                 System.out.println("Sending signature");
-
-                out.writeUTF(main.getTrackerFolder() + File.separator + searchingFor + "-sign");
+                
+                System.out.println("Sign size: " + new File(main.getTrackerFolder() + File.separator + searchingFor + "-sign").length());
+                
                 fis = new FileInputStream(main.getTrackerFolder() + File.separator + searchingFor + "-sign");
                 buf = new byte[4096];
                 while (true) {

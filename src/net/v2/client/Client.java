@@ -85,7 +85,7 @@ public class Client extends Thread {
         new Search(main, search);
     }
 
-    public void requestFileFromPeer(InetAddress peer, Integer peerPort, String file) {
+    public void requestFileFromPeer(String peerIP, Integer peerPort, String file) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
@@ -136,8 +136,14 @@ class Search extends Thread {
 
                 byte[] buf = new byte[4096];
                 int i = 1;
+                long auxR = 0;
+                long totalRead = sIn.readLong();
+                
+                System.out.println("File SIze: " + totalRead);
+
                 while (true) {
                     int len = sIn.read(buf);
+                    System.out.println("len " + len);
                     if (len == -1) {
                         System.out.println("Breaking ...");
                         break;
@@ -145,8 +151,15 @@ class Search extends Thread {
                     System.out.println("Reading ... ");
                     fOut.write(buf, 0, len);
 
+                    auxR += len;
+                    
+                    if(auxR >= totalRead){
+                        break;
+                    }
+                    
+                    System.out.println("AuxR " + auxR);
                 }
-                
+
                 System.out.println("Done reading");
 
                 fOut.close();
@@ -163,9 +176,9 @@ class Search extends Thread {
 
             if (incoming.equals("--1")) {
                 System.out.println("No search could be done.");
-                main.getGui().receiveSearchResponse(new Object[0][0]);
+                main.getGui().receiveSearchResponse(new Object[0][0], search);
                 return;
-            }else{
+            } else {
                 System.out.println("Search done.");
             }
 
@@ -173,18 +186,24 @@ class Search extends Thread {
 
             byte[] buf = new byte[4096];
             int i = 1;
+            long auxR = 0;
+            long totalRead = sIn.readLong();
+
             while (true) {
-                System.out.println("Gonna read");
                 int len = sIn.read(buf);
-                System.out.println("End reading");
-                
-                if (len == -1) {
-                    System.out.println("Breaking");
-                    break;
-                }
-                
-                System.out.println("writing ...");
-                fOutSearch.write(buf, 0, len);
+                    System.out.println("len " + len);
+                    if (len == -1) {
+                        System.out.println("Breaking ...");
+                        break;
+                    }
+                    System.out.println("Reading ... ");
+                    fOutSearch.write(buf, 0, len);
+
+                    auxR += len;
+                    
+                    if(auxR >= totalRead){
+                        break;
+                    }
             }
 
             fOutSearch.close();
@@ -197,13 +216,30 @@ class Search extends Thread {
 
             buf = new byte[4096];
             i = 1;
+
+            auxR = 0;
+            totalRead = sIn.readLong();
+
+            System.out.println("Size of sign: " + totalRead);
+
             while (true) {
                 int len = sIn.read(buf);
-                if (len == -1) {
-                    break;
-                }
-                fOutSearch.write(buf, 0, len);
+                    System.out.println("len " + len);
+                    if (len == -1) {
+                        System.out.println("Breaking ...");
+                        break;
+                    }
+                    System.out.println("Reading ... ");
+                    fOutSearch.write(buf, 0, len);
+
+                    auxR += len;
+                    
+                    if(auxR >= totalRead){
+                        break;
+                    }
             }
+
+            System.out.println("Total Leng: " + new File(configFolder.getPath() + File.separator + incoming).length());
 
             fOutSearch.close();
 
@@ -232,12 +268,12 @@ class Search extends Thread {
                     k++;
                 }
 
-                main.getGui().receiveSearchResponse(data);
+                main.getGui().receiveSearchResponse(data, search);
             }
 
 
             new File(configFolder.getPath() + File.separator + search + "-sign").delete();
-//            new File(configFolder.getPath() + File.separator + search + "-quemTem.txt").delete();
+            new File(configFolder.getPath() + File.separator + search + "-quemTem.txt").delete();
 
         } catch (IOException ex) {
             System.err.println("Client#Search - IO: " + ex.getMessage());
