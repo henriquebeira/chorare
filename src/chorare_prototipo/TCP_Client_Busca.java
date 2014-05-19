@@ -6,12 +6,11 @@
 package chorare_prototipo;
 
 /**
- * Classe para a requisição de busca de arquivos para o Tracker.
- * Requisição da chave pública, disponibilizada pelo Tracker.
- * Requisição do arquivo desejado ao Tracker.
- * Recebimento de quemTem.txt, assim como da sua assinatura.
+ * Classe para a requisição de busca de arquivos para o Tracker. Requisição da
+ * chave pública, disponibilizada pelo Tracker. Requisição do arquivo desejado
+ * ao Tracker. Recebimento de quemTem.txt, assim como da sua assinatura.
  * Efetivar a transferência do arquivo requisitado, por unicast.
- * 
+ *
  * @author Henrique
  */
 import java.net.*;
@@ -26,10 +25,11 @@ public class TCP_Client_Busca implements Runnable {
     private final String caminhoDoDiretorio;
     private final VerificadorAssinatura verificadorAssinatura;
     private final Janela janela;
-    
+
     /**
-     * Construtora da classe. Preparação do verificador de assinaturas feitas pelo Tracker.
-     * 
+     * Construtora da classe. Preparação do verificador de assinaturas feitas
+     * pelo Tracker.
+     *
      * @param caminhoDoDiretorio Caminho raíz dos processos.
      * @param portaServidor Porta do Tracker.
      * @param portaCliente Porta do peer.
@@ -38,18 +38,19 @@ public class TCP_Client_Busca implements Runnable {
         this.caminhoDoDiretorio = caminhoDoDiretorio;
         this.portaServidor = portaServidor;
         this.portaCliente = portaCliente;
-        verificadorAssinatura = new VerificadorAssinatura(caminhoDoDiretorio+ portaCliente);
+        verificadorAssinatura = new VerificadorAssinatura(caminhoDoDiretorio + portaCliente);
         janela = jan;
     }
 
     /**
-     * Conexão com a porta de recebimento de buscas do Tracker, que é final 2, e.g. 8012 (quando o peer é 8010).
-     * Recebimento da chave pública do Tracker.
-     * Preparação da entrada que receberá o arquivo desejado para ser transferido.
-     * Recebimento do arquivo quemTem.txt.
-     * Recebimento da assinatura do arquivo quemTem.txt.
-     * Se a assinatura foi realmente feita pelo Tracker, efetivar a transferência do arquivo requisitado com o Processo indicado pelo quemTem.txt.
-     * 
+     * Conexão com a porta de recebimento de buscas do Tracker, que é final 2,
+     * e.g. 8012 (quando o peer é 8010). Recebimento da chave pública do
+     * Tracker. Preparação da entrada que receberá o arquivo desejado para ser
+     * transferido. Recebimento do arquivo quemTem.txt. Recebimento da
+     * assinatura do arquivo quemTem.txt. Se a assinatura foi realmente feita
+     * pelo Tracker, efetivar a transferência do arquivo requisitado com o
+     * Processo indicado pelo quemTem.txt.
+     *
      */
     @Override
     public void run() {
@@ -57,12 +58,13 @@ public class TCP_Client_Busca implements Runnable {
         try {
             int serverPort = portaServidor + 2;
             janela.setjLog("Porta Servidor Busca: " + serverPort + "\n");
-            
-            // Recebimento da chave pública do Tracker
-            if (portaCliente != portaServidor) {
-                Thread thread3 = new Thread(new TCP_Server_Transferencia(caminhoDoDiretorio, portaServidor));
-                thread3.start();
 
+            //Todos os Processos preparam as suas portas para possíveis transferências unicast de arquivos
+            Thread thread2 = new Thread(new TCP_Server_Transferencia(caminhoDoDiretorio, portaCliente));
+            thread2.start();
+            
+            //Faz a requisição da chave pública do Tracker
+            if (portaCliente != portaServidor) {
                 Thread.sleep(3000);
                 Thread thread4 = new Thread(new TCP_Client_Transferencia(caminhoDoDiretorio, portaServidor, portaCliente, "public_key", janela));
                 thread4.start();
@@ -75,13 +77,14 @@ public class TCP_Client_Busca implements Runnable {
 
                 janela.setjLog("\n Digite o nome do arquivo desejado... ");
                 janela.bloqueioBotaoBusca(true);
-                while (janela.isClicou() == false) {
+                while (janela.isClicou() == false) { //Enquanto o botão "Buscar arquivo" não for clicado...
                     Thread.sleep(1000);
                 }
-                String arquivodesejado = janela.getjCampoBusca(); 
-                janela.setjLog("O nome digitado foi: " + arquivodesejado);
-                out.writeUTF(String.valueOf(portaCliente));
-                out.writeUTF(arquivodesejado);      	// Faz requisição do arquivo...
+                String arquivoDesejado = janela.getjCampoBusca();
+                janela.setjLog("O nome digitado foi: " + arquivoDesejado);
+                
+                out.writeUTF(String.valueOf(portaCliente)); // Envia quem fez a requisição
+                out.writeUTF(arquivoDesejado);      	    // Envia o nome do arquivo requirido...
 
                 String quemTem = in.readUTF();	    //... e recebe qual processo tem o arquivo desejado
                 janela.setjLog("Quem tem o arquivo? " + quemTem);
@@ -89,7 +92,7 @@ public class TCP_Client_Busca implements Runnable {
                 if (!quemTem.equals("--1")) {
                     // Recebe o arquivo quemTem.txt, caso o requisitante não seja o próprio Processo que está atuando como Tracker
                     if (portaCliente != portaServidor) {
-                        FileOutputStream fos = new FileOutputStream(new File(caminhoDoDiretorio + portaCliente + File.separator + "controle"+File.separator+"quemTem.txt"));
+                        FileOutputStream fos = new FileOutputStream(new File(caminhoDoDiretorio + portaCliente + File.separator + "controle" + File.separator + "quemTem.txt"));
                         byte[] buf = new byte[4096];
                         int i = 1;
                         while (true) {
@@ -103,19 +106,16 @@ public class TCP_Client_Busca implements Runnable {
                         out.close();
                         socket.close();
                     }
-                    
+
                     // Recebimento da assinatura do arquivo quemTem.txt, caso o requisitante não seja o próprio Processo que está atuando como Tracker
                     Thread.sleep(5000);
                     if (portaCliente != portaServidor) {
                         janela.setjLog("Buscar assinatura...");
-                        Thread thread3 = new Thread(new TCP_Server_Transferencia(caminhoDoDiretorio, portaServidor));
-                        thread3.start();
-
                         Thread.sleep(3000);
                         Thread thread4 = new Thread(new TCP_Client_Transferencia(caminhoDoDiretorio, portaServidor, portaCliente, "assinatura", janela));
                         thread4.start();
                     }
-                    
+
                     // Se a assinatura foi realmente feita pelo Tracker, efetivar a transferência do arquivo requisitado.
                     Thread.sleep(5000);
                     if (verificadorAssinatura.verificar() == true) {
@@ -125,13 +125,16 @@ public class TCP_Client_Busca implements Runnable {
                         String numeroProcesso = sc.nextLine();
                         janela.setjLog("Conectar ao Processo: " + numeroProcesso);
 
-                        // Recebe o diretório/processo que tem o arquivo solicitado, e prepara transferência
-                        Thread thread3 = new Thread(new TCP_Server_Transferencia(caminhoDoDiretorio, Integer.parseInt(numeroProcesso)));
-                        thread3.start();
-
+                        // Recebe o diretório/processo que tem o arquivo solicitado, e requisita transferência
                         Thread.sleep(3000);
-                        Thread thread4 = new Thread(new TCP_Client_Transferencia(caminhoDoDiretorio, Integer.parseInt(numeroProcesso), portaCliente, arquivodesejado, janela));
+                        Thread thread4 = new Thread(new TCP_Client_Transferencia(caminhoDoDiretorio, Integer.parseInt(numeroProcesso), portaCliente, arquivoDesejado, janela));
                         thread4.start();
+                        
+                        // Atualiza a lista.txt do Tracker
+                        socket = new Socket("localhost", portaServidor);
+                        out = new DataOutputStream(socket.getOutputStream());
+                        out.writeUTF(portaCliente + ";" + arquivoDesejado + ";");
+                        
                     } else {
                         janela.setjLog("Assinatura inválida! ");
                     }
@@ -164,4 +167,3 @@ public class TCP_Client_Busca implements Runnable {
         }
     }
 }
-

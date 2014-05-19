@@ -27,7 +27,7 @@ public class Processo2 {
         Janela janela = new Janela();
         janela.setVisible(true);
         Thread thread1 = new Thread(new EnvioMulticast(10000, 8020));
-        Thread thread2 = new Thread(new RecebeMulticast(8020, caminhoRaiz, janela));
+        Thread thread2 = new Thread(new RecebeMulticast(8020, caminhoRaiz, janela, 4));
         thread1.start();
         thread2.start();
                 

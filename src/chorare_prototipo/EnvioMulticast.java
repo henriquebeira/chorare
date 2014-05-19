@@ -48,7 +48,7 @@ public class EnvioMulticast implements Runnable {
             byte[] mensagem = (portaPasta + ";" + voto + ";").getBytes();
 
             // Envia mensagens...
-            for (int i = 0; i < 4; i++) {		
+            while (true) {		
                 DatagramPacket messageOut = new DatagramPacket(mensagem, mensagem.length, group, 6789);
                 s.send(messageOut);
                 Thread.sleep(tempoEspera);

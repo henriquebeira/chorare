@@ -24,10 +24,11 @@ import java.util.logging.Logger;
  */
 public class RecebeMulticast implements Runnable{
 
-    private final int numeroPortaPasta;
+    private final int numeroPortaPasta, numeroDeProcessos;
     private final ArrayList<Voto> votacao;
     private final String caminhoDoDiretorio;
     private final Janela janela;
+    private boolean repetido = false;
 
     /**
      * Construtora da classe, preparando a eleição posteriormente feita.
@@ -35,11 +36,12 @@ public class RecebeMulticast implements Runnable{
      * @param numPorta Identificação do Processo, que também é a identificação da pasta.
      * @param caminhoDaPasta Caminho raíz de todos os Processos.
      */
-    RecebeMulticast(int numPorta, String caminhoDaPasta, Janela janela) {
+    RecebeMulticast(int numPorta, String caminhoDaPasta, Janela janela, int numProcessos) {
         this.votacao = new ArrayList<>();
         numeroPortaPasta = numPorta;
         this.caminhoDoDiretorio = caminhoDaPasta;
         this.janela = janela;
+        numeroDeProcessos = numProcessos;
         janela.setTitle(String.valueOf(numPorta));
         janela.bloqueioBotaoBusca(false);
     }
@@ -57,7 +59,7 @@ public class RecebeMulticast implements Runnable{
             InetAddress group = InetAddress.getByName("228.5.6.7");
             socket = new MulticastSocket(6789);
             socket.joinGroup(group);
-            for (int i = 0; i < 4; i++) {
+            while (votacao.size() < numeroDeProcessos) {
                 byte[] buffer = new byte[1000];
                 DatagramPacket messageIn = new DatagramPacket(buffer, buffer.length);
                 socket.receive(messageIn);
@@ -68,7 +70,26 @@ public class RecebeMulticast implements Runnable{
                 String[] parts = mensagem.split(";");
                 int porta = Integer.valueOf(parts[0]); // processo
                 int voto = Integer.valueOf(parts[1]); // porta
-                votacao.add(new Voto(porta, voto));
+                
+                //É o 1º voto? adiciona...
+                if(votacao.isEmpty() && numeroPortaPasta == porta){
+                    votacao.add(new Voto(porta, voto));
+                }
+                
+                //Verifica se o processo da mensagem recebida já está na votação
+                for (int i = 0; i < votacao.size(); i++) {
+                    if (votacao.get(i).getPorta() == porta) {
+                        repetido = true;
+                        break;
+                    }
+                }
+                
+                //Adiciona o voto do processo caso não esteja na votação
+                if (repetido == false){
+                    votacao.add(new Voto(porta, voto));
+                } else {
+                    repetido = false;
+                }
             }
             
             // Eleição do tracker

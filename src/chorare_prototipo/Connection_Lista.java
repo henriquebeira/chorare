@@ -5,10 +5,12 @@
  */
 package chorare_prototipo;
 
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -23,6 +25,7 @@ class Connection_Lista extends Thread {
     private Socket clientSocket;
     private String caminhoCompletoDoDiretorio;
     private FileOutputStream fos;
+    private Boolean achou = false;
 
     /**
      * Construtora da classe.
@@ -53,8 +56,22 @@ class Connection_Lista extends Thread {
             while (!this.isInterrupted()) {
                 String identificacaoArquivo = in.readUTF();
                 System.out.println("Connection_Lista recebeu: " + identificacaoArquivo);
-                fos = new FileOutputStream(caminhoCompletoDoDiretorio + File.separator + "controle" + File.separator + "lista.txt", true);
-                fos.write((identificacaoArquivo + "\n").getBytes());
+                
+                BufferedReader br = new BufferedReader(new FileReader(caminhoCompletoDoDiretorio + File.separator + "controle" + File.separator + "lista.txt"));
+                while (br.ready()) {
+                    String linha = br.readLine();
+                    if (identificacaoArquivo.equals(linha)) {
+                        achou = true;
+                        break;
+                    }
+                }    
+                br.close();
+                
+                if (achou == false) {
+                    fos = new FileOutputStream(caminhoCompletoDoDiretorio + File.separator + "controle" + File.separator + "lista.txt", true);
+                    fos.write((identificacaoArquivo + "\n").getBytes());
+                    achou = false;
+                }
             }
             in.close();
             clientSocket.close();
