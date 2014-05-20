@@ -1,7 +1,1 @@
-c:192.168.3.1:52951:arquivo de a.txt:
-b:192.168.3.1:52950:arquivo de a.txt:
-d:192.168.3.1:52952:c-rocks.txt:
-b:192.168.3.1:52950:arquivo de b.txt:
-c:192.168.3.1:52951:arquivo de b.txt:
-b:192.168.3.1:52950:c-rocks.txt:
-c:192.168.3.1:52951:c-rocks.txt:
+b:127.0.1.1:36040:arquivo de a.txt:

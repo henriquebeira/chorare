@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Scanner;
 import net.v2.start.Main;
@@ -54,6 +55,11 @@ public class AnswerSearch extends Thread {
     @Override
     public void run() {
         try {
+            String IP = input.readUTF();
+            int port = input.readInt();
+            
+            Socket reconnect;
+            
             String needPublicKey = input.readUTF();
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             
@@ -62,12 +68,15 @@ public class AnswerSearch extends Thread {
 
             if (needPublicKey.equals("Y_PK")) {
                 System.out.println("He needs PK");
+                
+                reconnect = new Socket(InetAddress.getByName(IP), port);
+                DataOutputStream outRec = new DataOutputStream(reconnect.getOutputStream());
 
                 out.writeUTF("public-key");
                 fis = new FileInputStream(main.getTrackerFolder() + File.separator + "public-key");
                 buf = new byte[4096];
                 
-                out.writeLong(new File(main.getTrackerFolder() + File.separator + "public-key").length());
+//                out.writeLong(new File(main.getTrackerFolder() + File.separator + "public-key").length());
                 
                 while (true) {
                     int len = fis.read(buf);
@@ -76,8 +85,13 @@ public class AnswerSearch extends Thread {
                         break;
                     }
                     System.out.println("writing ...");
-                    out.write(buf, 0, len);
+                    outRec.write(buf, 0, len);
                 }
+                
+                outRec.close();
+                reconnect.close();
+                
+//                out.flush();
 
                 fis.close();
 
@@ -107,10 +121,14 @@ public class AnswerSearch extends Thread {
                 sc.close();
                 auxTemp.close();
                 fOutTemp.close();
+                
+                reconnect = new Socket(InetAddress.getByName(IP), port);
+                DataOutputStream outRec = new DataOutputStream(reconnect.getOutputStream());
 
                 out.writeUTF(searchingFor + "-quemTem.txt");
                 
-                out.writeLong(new File(main.getTrackerFolder() + File.separator + searchingFor + "-quemTem.txt").length());
+//                out.writeLong(new File(main.getTrackerFolder() + File.separator + searchingFor + "-quemTem.txt").length());
+                System.out.println("QuemTem Size: " + new File(main.getTrackerFolder() + File.separator + searchingFor + "-quemTem.txt").length());
                 
                 System.out.println("Sending list.");
 
@@ -119,18 +137,29 @@ public class AnswerSearch extends Thread {
                 while (true) {
                     int len = fis.read(buf);
                     if (len == -1) {
+                        System.out.println("Breaking");
                         break;
                     }
-                    out.write(buf, 0, len);
+                    System.out.println("Writing");
+                    outRec.write(buf, 0, len);
                 }
+                
+                outRec.close();
+                reconnect.close();
+                
+//                out.flush();
+                
                 fis.close();
 
                 //Assinar o quemTem.txt
                 sign.assinar(searchingFor);
+                
+                reconnect = new Socket(InetAddress.getByName(IP), port);
+                outRec = new DataOutputStream(reconnect.getOutputStream());
 
                 out.writeUTF(searchingFor + "-sign");
                 
-                out.writeLong(new File(main.getTrackerFolder() + File.separator + searchingFor + "-sign").length());
+//                out.writeLong(new File(main.getTrackerFolder() + File.separator + searchingFor + "-sign").length());
                 
                 System.out.println("Sending signature");
                 
@@ -143,19 +172,24 @@ public class AnswerSearch extends Thread {
                     if (len == -1) {
                         break;
                     }
-                    out.write(buf, 0, len);
+                    outRec.write(buf, 0, len);
                 }
+                
+                outRec.close();
+                reconnect.close();
+                
+//                out.flush();
 
                 fis.close();
 
-                new File(main.getTrackerFolder() + File.separator + searchingFor + "-quemTem.txt").delete();
-                new File(main.getTrackerFolder() + File.separator + searchingFor + "-sign").delete();
+//                new File(main.getTrackerFolder() + File.separator + searchingFor + "-quemTem.txt").delete();
+//                new File(main.getTrackerFolder() + File.separator + searchingFor + "-sign").delete();
 
             } else {
                 out.writeUTF("--1");
             }
 
-            out.close();
+//            out.close();
 
         } catch (IOException ex) {
             System.err.println("AnswerSearch - IO: " + ex.getMessage());
