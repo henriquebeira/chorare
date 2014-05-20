@@ -19,8 +19,9 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import net.v2.start.Main;
 
 /**
- *
- * @author User
+ * Classe para gerar o par de chaves, e assinar o quemTem.txt
+ * 
+ * @author Henrique
  */
 public class SignatureGenerator {
     private Main main;

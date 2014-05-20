@@ -35,7 +35,8 @@ import org.jdesktop.swingx.JXBusyLabel;
 import org.jdesktop.swingx.JXTable;
 
 /**
- *
+ * Classe para a interface gráfica.
+ * 
  * @author User
  */
 public class GUI extends JFrame implements WindowListener {
@@ -51,6 +52,11 @@ public class GUI extends JFrame implements WindowListener {
     private JTextField searchArea;
     private JXTable table;
 
+     /**
+     * Construtora da classe.
+     * 
+     * @param mainR Classe principal de um processo.
+     */
     public GUI(Main mainR) {
         setLayout(new BorderLayout());
         setTitle(mainR.getNickName());
@@ -148,6 +154,11 @@ public class GUI extends JFrame implements WindowListener {
                 true);
     }
 
+    /**
+     * Método para modificação da GUI.
+     *
+     * @param mode
+     */
     public void updateState(Byte mode) {
         if (mode == MODE_RUN) {
             changeModeRunning();
@@ -159,6 +170,9 @@ public class GUI extends JFrame implements WindowListener {
         }
     }
 
+    /**
+     * Método para a GUI esperar mais processos.
+     */
     private void changeModeAwaiting() {
         if (mode != MODE_WAIT) {
             this.remove(running);
@@ -170,6 +184,9 @@ public class GUI extends JFrame implements WindowListener {
         }
     }
 
+    /**
+     * Método para a GUI remover a tela de espera.
+     */
     private void changeModeRunning() {
         if (mode != MODE_RUN) {
             this.remove(waiting);
@@ -189,10 +206,21 @@ public class GUI extends JFrame implements WindowListener {
         updateState(mode);
     }
 
+    /**
+     * Método para realizar uma busca.
+     * 
+     * @param search Nome do arquivo.
+     */
     private void doSearch(String search) {
         main.getClient().search(search);
     }
 
+    /**
+     * Método de construção de uma tabela com os resultados de uma busca.
+     *
+     * @param data Dados vindos do quemTem.txt.
+     * @param searched Arquivo pesquisado.
+     */
     public void receiveSearchResponse(Object[][] data, String searched) {
         JPanel panel = new JPanel(new BorderLayout());
 
@@ -259,10 +287,25 @@ public class GUI extends JFrame implements WindowListener {
         tabPanel.addTab(searched, panel);
     }
 
+    /**
+     * Método para a realização da transferência de um arquivo clicado na tabela.
+     * 
+     * @param peerNick Nome do peer.
+     * @param peerIP Endereço do peer.
+     * @param peerPort Porta do peer.
+     * @param file Nome do arquivo a ser transferido. 
+     */
     private void makeDownload(String peerNick, String peerIP, Integer peerPort, String file) {
         main.getClient().requestFileFromPeer(peerNick, peerIP, peerPort, file);
     }
 
+    /**
+     * Método para montar a janela de término do envio.
+     * 
+     * @param file Nome do arquivo.
+     * @param peerNick Nome do peer.
+     * @param filePath Caminho do deiretório do peer que recebeu o arquivo. 
+     */
     public void warnCompletedDownload(String file, String peerNick, File filePath) {
         String[] buttons = new String[]{"Abrir o arquivo", "Não abrir"};
 
@@ -281,6 +324,9 @@ public class GUI extends JFrame implements WindowListener {
         updateTable();
     }
 
+    /**
+     * Atualização da tabela com o arquivo recém transferido.
+     */
     private void updateTable() {
         File folder = main.getFilesFolder();
 

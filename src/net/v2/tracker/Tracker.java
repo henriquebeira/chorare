@@ -16,8 +16,9 @@ import java.util.logging.Logger;
 import net.v2.start.Main;
 
 /**
- *
- * @author User
+ * Classe principal de um Tracker eleito.
+ * 
+ * @author Henrique
  */
 public class Tracker extends Thread {
 
@@ -26,6 +27,11 @@ public class Tracker extends Thread {
     private MulticastSocket multiSocket;
     private Repeater repeater;
 
+    /**
+     * Construtora da classe.
+     * 
+     * @param main Classe principal de um processo.
+     */    
     public Tracker(Main main) {
         System.out.println("Starting Tracker");
         try {
@@ -45,6 +51,9 @@ public class Tracker extends Thread {
         }
     }
 
+    /**
+     * Método para receber requisições e a lista de arquivos de outros peers.
+     */    
     @Override
     public void run() {
         try {
@@ -71,12 +80,24 @@ public class Tracker extends Thread {
     }
 }
 
+/**
+ * Classe para avisar que o Tracker está ativo.
+ * 
+ * @author Henrique
+ */
 class Repeater extends Thread {
 
     String message;
     MulticastSocket socket;
     InetAddress sendTo;
 
+    /**
+     * Construtora da classe.
+     * 
+     * @param message Endereço e porta do Tracker.
+     * @param socket Socket do grupo multicast.
+     * @param sendTo Endereço do grupo multicast.
+     */    
     public Repeater(String message, MulticastSocket socket, InetAddress sendTo) {
         this.message = message;
         this.socket = socket;
@@ -85,6 +106,9 @@ class Repeater extends Thread {
         start();
     }
 
+    /**
+     * Método para envio da mensagem do Tracker.
+     */    
     @Override
     public void run() {
         if (socket != null) {

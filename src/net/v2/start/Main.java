@@ -14,7 +14,8 @@ import net.v2.client.Client;
 import net.v2.tracker.Tracker;
 
 /**
- *
+ * Classe principal de um processo.
+ * 
  * @author Henriques
  */
 public class Main {
@@ -35,6 +36,13 @@ public class Main {
     private final Client client;
     private Tracker auxTracker;
 
+     /**
+     * Criação dos diretórios "controle" e "track".
+     * Inicialização do controle de eleição, GUI, e do client do processo.
+     * 
+     * @param nickName Nome do diretório do processo
+     * @throws UnknownHostException Endereço inexistente.
+     */
     private Main(String nickName) throws UnknownHostException {
         this.nickName = nickName;
 
@@ -101,6 +109,11 @@ public class Main {
         return trackerAddress;
     }
 
+    /**
+     * Método para indicar o endereço do Tracker.
+     * 
+     * @param trackerAddress Endereço do Tracker.
+     */
     public void setTrackerAddress(InetAddress trackerAddress) {
         this.trackerAddress = trackerAddress;
 
@@ -140,6 +153,12 @@ public class Main {
         return gui;
     }
 
+    /**
+     * Inicialização do processo.
+     * Recebimento do nickname.
+     * 
+     * @param args 
+     */
     public static void main(String... args) {
         Main thisM;
 

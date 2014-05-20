@@ -22,29 +22,31 @@ import java.util.logging.Logger;
 import net.v2.start.Main;
 
 /**
+ * Classe para validação de assinaturas.
  *
- * @author User
+ * @author Henrique
  */
 public class ValidateSignature {
 
     private Main main;
 
     /**
-     * Construtora da classe. 
-     * 
-     * @param main Obeto Main da execução. 
+     * Construtora da classe.
+     *
+     * @param main Objeto Main do processo em execução.
      */
     public ValidateSignature(Main main) {
         this.main = main;
     }
 
     /**
-     * Importação da chave pública enviada pelo Tracker.
-     * Importação da assinatura enviada pelo Tracker.
-     * Criação do objeto Assinatura com a chave pública.
-     * Importação do arquivo quemTem.txt e verificando se a assinatura, em conjunto com a chave pública, é do Tracker que assinou.
-     * 
-     * @return Retorna "true" se a verificação comprovar a veracidade do arquivo quemTem.txt.
+     * Importação da chave pública enviada pelo Tracker. Importação da
+     * assinatura enviada pelo Tracker. Criação do objeto Assinatura com a chave
+     * pública. Importação do arquivo quemTem.txt e verificando se a assinatura,
+     * em conjunto com a chave pública, é do Tracker que assinou.
+     *
+     * @return Retorna "true" se a verificação comprovar a veracidade do arquivo
+     * quemTem.txt.
      */
     public boolean validate(String search) {
         FileInputStream keyfis = null;
@@ -82,7 +84,6 @@ public class ValidateSignature {
             };
 
             return sig.verify(sigToVerify);
-
 
         } catch (FileNotFoundException ex) {
             Logger.getLogger(ValidateSignature.class.getName()).log(Level.SEVERE, null, ex);

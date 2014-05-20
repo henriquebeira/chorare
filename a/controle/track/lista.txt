@@ -1,2 +1,0 @@
-b:192.168.1.100:39070:arquivo de b.txt:
-a:192.168.1.100:39069:arquivo de a.txt:

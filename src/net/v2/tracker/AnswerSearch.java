@@ -15,8 +15,9 @@ import java.util.Scanner;
 import net.v2.start.Main;
 
 /**
- *
- * @author User
+ * Classe para responder buscas.
+ * 
+ * @author Henrique
  */
 public class AnswerSearch extends Thread {
 
@@ -25,6 +26,14 @@ public class AnswerSearch extends Thread {
     private DataInputStream input;
     private SignatureGenerator sign;
 
+    /**
+     * Construtora da classe.
+     * Criação do gerador de assinatura.
+     * 
+     * @param main Classe principal do processo.
+     * @param socket Socket do Tracker.
+     * @param input Fluxo de dados do Tracker. 
+     */    
     public AnswerSearch(Main main, Socket socket, DataInputStream input) {
         this.main = main;
         this.socket = socket;
@@ -35,6 +44,13 @@ public class AnswerSearch extends Thread {
         start();
     }
 
+    /**
+     * Método para receber uma busca.
+     * Envio da chave pública, caso necessário.
+     * Carrega o quemTem.txt com quais processos possuem o arquivo desejado, e envia ao cliente.
+     * Gera assinatura da lista, e envia ao cliente.
+     * 
+     */    
     @Override
     public void run() {
         try {

@@ -13,14 +13,22 @@ import java.net.Socket;
 import net.v2.start.Main;
 
 /**
- *
- * @author User
+ * Classe para recebimento de listas.
+ * 
+ * @author Henrique
  */
 public class ReceiveList extends Thread{
     private Main main;
     private Socket socket;
     private DataInputStream input;
 
+    /**
+     * Construtora da classe.
+     * 
+     * @param main Classe principal do processo.
+     * @param socket Socket do Tracker.
+     * @param input Fluxo de dados do Tracker. 
+     */    
     public ReceiveList(Main main, Socket socket, DataInputStream input) {
         this.main = main;
         this.socket = socket;
@@ -29,6 +37,9 @@ public class ReceiveList extends Thread{
         start();
     }
 
+    /**
+     * Método para receber dos outros processos quais arquivos que possuem.
+     */    
     @Override
     public void run() {
         try {

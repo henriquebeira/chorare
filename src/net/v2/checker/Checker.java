@@ -16,20 +16,29 @@ import net.v2.start.Main;
 import net.v2.tracker.Tracker;
 
 /**
- *
- * @author User
+ * Classe para controle da eleição.
+ * 
+ * @author Henrique
  */
 public class Checker extends Thread {
 
     private Main main;
     private MulticastSocket mSocket;
 
+    /**
+     * Construtora da classe.
+     * 
+     * @param main Classe principal de um processo.
+     */    
     public Checker(Main main) {
         this.main = main;
 
         start();
     }
 
+    /**
+     * Método para a inicialização de um grupo Multicast.
+     */    
     @Override
     public void run() {
         try {
@@ -44,6 +53,9 @@ public class Checker extends Thread {
 
     }
 
+    /**
+     * Método para a realização de uma eleição, na ausência de um Tracker já definido.
+     */    
     private void loop() {
         while (!interrupted()) {
             if (main.getTrackerAddress() != null) {
@@ -55,6 +67,9 @@ public class Checker extends Thread {
         }
     }
 
+    /**
+     * Método para receber o endereço de um Tracker estabelecido. 
+     */    
     private void listenTracker() {
         try {
             mSocket.setSoTimeout(2000);
@@ -92,6 +107,9 @@ public class Checker extends Thread {
 
     }
 
+    /**
+     * Método para realizar uma eleição.
+     */    
     private void startElection() {
         try {
             SendVote sender = new SendVote(main);
@@ -170,6 +188,13 @@ public class Checker extends Thread {
     }
     private long runningTimeStart;
 
+    /**
+     * Método para terminar uma eleição.
+     *
+     * @param votesMap Mapeamento nickname - voto.
+     * @return True de tiver mais de 3 votos, ou mais de 1 voto passados 10
+     * segundos.
+     */
     private boolean endElection(HashMap<String, Integer> votesMap) {
         if (votesMap.size() > 3) {
             return true;
@@ -183,16 +208,29 @@ public class Checker extends Thread {
     }
 }
 
+/**
+ * Classe para envio do voto.
+ * 
+ * @author Henrique
+ */
 class SendVote extends Thread {
 
     String nick;
     Main main;
 
+    /**
+     * Construtora da classe.
+     * 
+     * @param main Classe principal de um processo.
+     */    
     public SendVote(Main main) {
         this.nick = main.getNickName();
         this.main = main;
     }
 
+    /**
+     * Método para envio dos votos.
+     */    
     @Override
     public void run() {
         try {

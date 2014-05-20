@@ -19,14 +19,20 @@ import java.util.Scanner;
 import net.v2.start.Main;
 
 /**
- *
- * @author User
+ * Classe de controle da parte cliente de um processo.
+ * 
+ * @author Henrique
  */
 public class Client extends Thread {
 
     private Main main;
     private ServerSocket sSocket;
 
+    /**
+     * Construtora da classe.
+     * 
+     * @param main Classe principal de um processo.
+     */
     public Client(Main main) {
         try {
             this.main = main;
@@ -44,6 +50,9 @@ public class Client extends Thread {
         }
     }
 
+    /**
+     * Método para tranferir arquivos solicitados.
+     */
     @Override
     public void run() {
         while(!interrupted()){
@@ -61,6 +70,9 @@ public class Client extends Thread {
         }
     }
 
+    /**
+     * Método para avisar ao Tracker quais arquivos possui.
+     */    
     public void sendFileList() {
         new Thread() {
             @Override
@@ -98,17 +110,33 @@ public class Client extends Thread {
         }.start();
     }
 
+    /**
+     * Método para realizar uma requisição de busca ao Tracker.
+     * 
+     * @param search Nome de arquivo desejado.
+     */    
     public void search(String search) {
         new Search(main, search);
     }
 
+    /**
+     * Método para requisitar um arquivo.
+     * 
+     * @param peerNick Nome do processo.
+     * @param peerIP Número do IP do peer servidor.
+     * @param peerPort Número da porta do peer servidor.
+     * @param file Nome do arquivo a ser transferido.
+     */
     public void requestFileFromPeer(String peerNick, String peerIP, Integer peerPort, String file) {
         new RequestFile(main, peerNick, peerIP, peerPort, file);
     }
 }
 
-
-
+/**
+ * Classe usada para realizar o download de um arquivo.
+ * 
+ * @author Henrique
+ */
 class RequestFile extends Thread{
     private Main main;
     private InetAddress ip;
@@ -116,6 +144,15 @@ class RequestFile extends Thread{
     private String file;
     private String nick;
 
+    /**
+     * Construtora da classe.
+     * 
+     * @param main Classe principal do processo.
+     * @param peerNick Nome do processo.
+     * @param ip Número do IP do peer servidor.
+     * @param port Número da porta do peer servidor.
+     * @param file Nome do arquivo a ser transferido.
+     */
     public RequestFile(Main main, String peerNick, String ip, Integer port, String file) {
         try {
             this.main = main;
@@ -129,6 +166,9 @@ class RequestFile extends Thread{
         }
     }
 
+    /**
+     * Método para a conexão com o peer que irá transferir o arquivo.
+     */
     @Override
     public void run() {
         try {
@@ -167,12 +207,24 @@ class RequestFile extends Thread{
     }
 }
 
+/**
+ * Classe para buscar um arquivo, e receber do Tracker a lista de quem tem.
+ *
+ * @author Henrique
+ */
 class Search extends Thread {
 
     private Main main;
     private String search;
     private ValidateSignature validate;
 
+    /**
+     * Construtora da classe.
+     * Inicialização do validador de assinaturas.
+     * 
+     * @param main Classe principal de um processo.
+     * @param search Nome do arquivo a ser requisitado.
+     */    
     public Search(Main main, String search) {
         this.main = main;
         this.search = search;
@@ -182,6 +234,15 @@ class Search extends Thread {
         start();
     }
 
+    /**
+     * Método para iniciar toda a transação.
+     * Realização do contato inicial com o Tracker.
+     * Transferência da chave pública, caso ainda não a tenha disponível localmente.
+     * Transferência do quemTem.txt
+     * Transferência da assinatura.
+     * Validação da assinatura.
+     * Extração dos dados do quemTem.txt e envio para a construção da tabela na GUI.
+     */    
     @Override
     public void run() {
         try {
@@ -342,6 +403,11 @@ class Search extends Thread {
     }
 }
 
+/**
+ * Classe usada para a montagem do objeto que é utilizado para montar a tabela na GUI.
+ * 
+ * @author Henrique
+ */
 class AuxData {
 
     private String address;

@@ -16,13 +16,19 @@ import net.v2.start.Main;
 
 /**
  *
- * @author User
+ * @author Henrique
  */
 public class TransferFile extends Thread {
 
     private Main main;
     private Socket socket;
 
+    /**
+     * Construtora da classe.
+     * 
+     * @param main Classe principal do processo.
+     * @param socket Socket para transferência de arquivos.
+     */
     public TransferFile(Main main, Socket socket) {
         this.main = main;
         this.socket = socket;
@@ -30,6 +36,9 @@ public class TransferFile extends Thread {
         start();
     }
 
+    /**
+     * Método para realizar a tranferência de arquivos.
+     */
     @Override
     public void run() {
         DataInputStream in = null;
