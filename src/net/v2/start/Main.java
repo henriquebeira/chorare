@@ -111,6 +111,7 @@ public class Main {
 
     /**
      * Método para indicar o endereço do Tracker.
+     * Envio da lista de arquivos para o Tracker.
      * 
      * @param trackerAddress Endereço do Tracker.
      */
@@ -182,6 +183,7 @@ public class Main {
 
     public void setAuxTracker(Tracker auxTracker) {
         this.auxTracker = auxTracker;
+        gui.setTitle(nickName + " - Tracker");
     }
 
     public void killThreads() {

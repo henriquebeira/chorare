@@ -19,7 +19,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import net.v2.start.Main;
 
 /**
- * Classe para gerar o par de chaves, e assinar o quemTem.txt
+ * Classe para gerar o par de chaves, e assinar o quemTem.txt.
  * 
  * @author Henrique
  */

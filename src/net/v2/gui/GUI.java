@@ -5,7 +5,6 @@
 package net.v2.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Desktop;
@@ -17,8 +16,6 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -54,6 +51,7 @@ public class GUI extends JFrame implements WindowListener {
 
      /**
      * Construtora da classe.
+     * Inicialização da GUI do processo.
      * 
      * @param mainR Classe principal de um processo.
      */
@@ -146,16 +144,13 @@ public class GUI extends JFrame implements WindowListener {
 
         running.add(tabPanel);
 
-//        //TEst
-//        running.setBackground(Color.yellow);
         changeModeAwaiting();
 
-        this.setVisible(
-                true);
+        this.setVisible(true);
     }
 
     /**
-     * Método para modificação da GUI.
+     * Método para modificação do modo da GUI.
      *
      * @param mode
      */
@@ -300,7 +295,7 @@ public class GUI extends JFrame implements WindowListener {
     }
 
     /**
-     * Método para montar a janela de término do envio.
+     * Método para montar a janela popup de término do envio.
      * 
      * @param file Nome do arquivo.
      * @param peerNick Nome do peer.

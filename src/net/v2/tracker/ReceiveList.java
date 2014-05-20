@@ -38,7 +38,7 @@ public class ReceiveList extends Thread{
     }
 
     /**
-     * Método para receber dos outros processos quais arquivos que possuem.
+     * Método para receber dos outros processos quais arquivos que possuem, e escrever na lista.txt.
      */    
     @Override
     public void run() {

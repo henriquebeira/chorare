@@ -83,7 +83,7 @@ public class AnswerSearch extends Thread {
 
             }
 
-
+            //Recebe a busca...
             String searchingFor = input.readUTF();
             
             System.out.println("He is searching for: " + searchingFor);
@@ -125,6 +125,7 @@ public class AnswerSearch extends Thread {
                 }
                 fis.close();
 
+                //Assinar o quemTem.txt
                 sign.assinar(searchingFor);
 
                 out.writeUTF(searchingFor + "-sign");

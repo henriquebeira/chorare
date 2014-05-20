@@ -22,7 +22,7 @@ import java.util.logging.Logger;
 import net.v2.start.Main;
 
 /**
- * Classe para validação de assinaturas.
+ * Classe para validação de assinaturas do quemTem.txt.
  *
  * @author Henrique
  */

@@ -46,7 +46,6 @@ public class Checker extends Thread {
 
             mSocket.joinGroup(main.getMulticastAddress());
 
-
             loop();
         } catch (IOException ex) {
         }

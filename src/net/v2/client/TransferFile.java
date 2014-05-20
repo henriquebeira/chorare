@@ -10,12 +10,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.v2.start.Main;
 
 /**
- *
+ * Classe para transferir arquivos requisitados por unicast.
+ * 
  * @author Henrique
  */
 public class TransferFile extends Thread {

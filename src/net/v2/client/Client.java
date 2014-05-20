@@ -120,7 +120,7 @@ public class Client extends Thread {
     }
 
     /**
-     * Método para requisitar um arquivo.
+     * Método para requisitar um arquivo de um peer.
      * 
      * @param peerNick Nome do processo.
      * @param peerIP Número do IP do peer servidor.
